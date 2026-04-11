@@ -16,18 +16,20 @@ namespace PassGuard.DAL
         public List<VisitPass> GetAllWithDetails()
         {
             return _context.VisitPasses
+                .Include(v => v.Visitor)
                 .Include(v => v.Home)
                     .ThenInclude(h => h.Estate)
-                .Include(v => v.GateCheckIns)
+                .Include(v => v.GateCheckIn)
                 .OrderByDescending(v => v.CreatedAt)
                 .ToList();
         }
         public VisitPass? GetFullDetails(int id)
         {
             return _context.VisitPasses
+                .Include(v => v.Visitor)
                 .Include(v => v.Home)
                     .ThenInclude(h => h.Estate)
-                .Include(v => v.GateCheckIns)
+                .Include(v => v.GateCheckIn)
                 .FirstOrDefault(v => v.VisitPassId == id);
         }
 
@@ -67,7 +69,7 @@ namespace PassGuard.DAL
         public int CountDistinctVisitors()
         {
             return _context.VisitPasses
-                .Select(v => new { v.VisitorName, v.VisitorPhone })
+                .Select(v => v.VisitorId)
                 .Distinct()
                 .Count();
         }

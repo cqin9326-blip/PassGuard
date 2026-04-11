@@ -19,7 +19,7 @@ namespace PassGuard.DAL
             return _context.Homes
                 .Include(h => h.Estate)
                 .Include(h => h.VisitPasses)
-                .OrderBy(h => h.OwnerName)
+                .OrderBy(h => h.OwnerUserId)
                 .ToList();
         }
 
@@ -28,7 +28,9 @@ namespace PassGuard.DAL
             return _context.Homes
                 .Include(h => h.Estate)
                 .Include(h => h.VisitPasses)
-                    .ThenInclude(v => v.GateCheckIns)
+                    .ThenInclude(v => v.Visitor)
+                .Include(h => h.VisitPasses)
+                    .ThenInclude(v => v.GateCheckIn)
                 .FirstOrDefault(h => h.HomeId == id);
         }
 

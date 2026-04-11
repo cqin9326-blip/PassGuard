@@ -13,19 +13,10 @@ namespace PassGuard.DAL
             _context = context;
         }
 
-        public List<GateCheckIn> GetByVisitPassId(int visitPassId)
+        public GateCheckIn? GetByVisitPassId(int visitPassId)
         {
             return _context.GateCheckIns
                 .Where(g => g.VisitPassId == visitPassId)
-                .OrderByDescending(g => g.CheckInTime)
-                .ToList();
-        }
-
-        public GateCheckIn? GetLatestByVisitPassId(int visitPassId)
-        {
-            return _context.GateCheckIns
-                .Where(g => g.VisitPassId == visitPassId)
-                .OrderByDescending(g => g.CheckInTime)
                 .FirstOrDefault();
         }
 

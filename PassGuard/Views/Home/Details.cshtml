@@ -7,7 +7,7 @@
 <h2>Property Details</h2>
 
 <p><strong>Estate Name:</strong> @Model.Estate.EstateName</p>
-<p><strong>Owner Name:</strong> @Model.OwnerName</p>
+<p><strong>Owner User Id:</strong> @Model.OwnerUserId</p>
 <p><strong>Home Address:</strong> @Model.Address</p>
 
 <hr />
@@ -18,8 +18,8 @@
 {
     foreach (var item in Model.VisitPasses)
     {
-        <p><strong>Visitor Name:</strong> @item.VisitorName</p>
-        <p><strong>Visitor Phone Number:</strong> @item.VisitorPhone</p>
+        <p><strong>Visitor Name:</strong> @item.Visitor.FullName</p>
+        <p><strong>Visitor Phone Number:</strong> @item.Visitor.Phone</p>
         <hr />
     }
 }

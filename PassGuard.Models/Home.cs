@@ -4,7 +4,7 @@
     {
         public int HomeId { get; set; }
 
-        public string OwnerName { get; set; } = "";
+        public string OwnerUserId { get; set; } = "";
         public string Address { get; set; } = "";
 
         public int EstateId { get; set; }

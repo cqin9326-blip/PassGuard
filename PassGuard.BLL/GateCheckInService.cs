@@ -13,14 +13,9 @@ namespace PassGuard.BLL
             _repo = repo;
         }
 
-        public List<GateCheckIn> GetByVisitPassId(int visitPassId)
+        public GateCheckIn? GetByVisitPassId(int visitPassId)
         {
             return _repo.GetByVisitPassId(visitPassId);
-        }
-
-        public GateCheckIn? GetLatestByVisitPassId(int visitPassId)
-        {
-            return _repo.GetLatestByVisitPassId(visitPassId);
         }
 
         public GateCheckIn? GetById(int id)

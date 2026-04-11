@@ -36,18 +36,16 @@ namespace PassGuard.BLL
                 ActivePasses = _visitPassRepository.CountActivePasses(),
                 TodayCheckInCount = _gateCheckInRepository.GetTodayCount(),
                 TodayVisitors = visitPasses
-                    .Where(v => v.CreatedAt.Date == today || v.GateCheckIns.Any(g => g.CheckInTime.Date == today))
+                    .Where(v => v.CreatedAt.Date == today || v.GateCheckIn != null && v.GateCheckIn.CheckInTime.Date == today)
                     .Select(v => new DashboardVisitorRowViewModel
                     {
-                        VisitorName = v.VisitorName,
+                        VisitorName = v.Visitor.FullName,
                         HomeAddress = v.Home.Address,
                         EstateName = v.Home.Estate.EstateName,
                         CreatedAt = v.CreatedAt,
                         ExpiresAt = v.ExpiresAt,
                         Status = v.Status,
-                        Result = v.GateCheckIns
-                            .OrderByDescending(g => g.CheckInTime)
-                            .FirstOrDefault()?.Result ?? "N/A"
+                        Result = v.GateCheckIn?.Result ?? "N/A"
                     })
                     .ToList()
             };

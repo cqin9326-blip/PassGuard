@@ -6,10 +6,10 @@
 
 <h2>Access Details</h2>
 
-<p><strong>Visitor Name:</strong> @Model.VisitorName</p>
-<p><strong>Visitor Phone:</strong> @Model.VisitorPhone</p>
+<p><strong>Visitor Name:</strong> @Model.Visitor.FullName</p>
+<p><strong>Visitor Phone:</strong> @Model.Visitor.Phone</p>
 <p><strong>Estate Name:</strong> @Model.Home.Estate.EstateName</p>
-<p><strong>Owner Name:</strong> @Model.Home.OwnerName</p>
+<p><strong>Owner User Id:</strong> @Model.Home.OwnerUserId</p>
 <p><strong>Home Address:</strong> @Model.Home.Address</p>
 
 <hr />
@@ -25,19 +25,16 @@
 
 
 
-@if (Model.GateCheckIns.Count > 0)
+@if (Model.GateCheckIn != null)
 {
-    foreach (var item in Model.GateCheckIns.OrderByDescending(g => g.CheckInTime))
-    {
-        <p><strong>Result:</strong> @item.Result</p>
-        <p><strong>Time:</strong> @item.CheckInTime</p>
-        <p><strong>Note:</strong> @item.Note</p>
-        <p>
-            <a asp-controller="GateCheckIn" asp-action="Edit" asp-route-id="@item.GateCheckInId">Edit Check-In</a> |
-            <a asp-controller="GateCheckIn" asp-action="Delete" asp-route-id="@item.GateCheckInId">Delete Check-In</a>
-        </p>
-        <hr />
-    }
+    <p><strong>Result:</strong> @Model.GateCheckIn.Result</p>
+    <p><strong>Time:</strong> @Model.GateCheckIn.CheckInTime</p>
+    <p><strong>Security User Id:</strong> @Model.GateCheckIn.SecurityUserId</p>
+    <p><strong>Note:</strong> @Model.GateCheckIn.Note</p>
+    <p>
+        <a asp-controller="GateCheckIn" asp-action="Edit" asp-route-id="@Model.GateCheckIn.GateCheckInId">Edit Check-In</a> |
+        <a asp-controller="GateCheckIn" asp-action="Delete" asp-route-id="@Model.GateCheckIn.GateCheckInId">Delete Check-In</a>
+    </p>
 }
 else
 {

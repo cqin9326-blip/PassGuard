@@ -1,5 +1,1 @@
-bin/
-obj/
-.vs/
-*.user
-*.suoPassGuard/appsettings*.json
+PassGuard/appsettings*.json

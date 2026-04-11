@@ -19,7 +19,7 @@
             <th>Home Address</th>
             <th>Total Visits</th>
             <th>Visit Pass Status</th>
-            <th>CheckIn History</th>
+            <th>Check-In</th>
             <th>Actions</th>
         </tr>
     </thead>
@@ -27,13 +27,13 @@
         @foreach (var item in Model)
         {
             <tr>
-                <td>@item.VisitorName</td>
-                <td>@item.VisitorPhone</td>
+                <td>@item.Visitor.FullName</td>
+                <td>@item.Visitor.Phone</td>
                 <td>@item.Home.Estate.EstateName</td>
                 <td>@item.Home.Address</td>
                 <td>@item.Home.VisitPasses.Count</td>
                 <td>@item.Status</td>
-                <td>@item.GateCheckIns.Count</td>
+                <td>@(item.GateCheckIn == null ? "No" : item.GateCheckIn.Result)</td>
                 <td>
                     <a asp-action="Edit" asp-route-id="@item.VisitPassId">Edit</a> |
                     <a asp-action="Details" asp-route-id="@item.VisitPassId">Details</a> |

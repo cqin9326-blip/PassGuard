@@ -1,0 +1,12 @@
+/Users/emmanuelolu/backend/sd-330 - Advanced db & ORM/Assignment/PassGuard/PassGuard.Models/bin/Debug/net8.0/PassGuard.Models.deps.json
+/Users/emmanuelolu/backend/sd-330 - Advanced db & ORM/Assignment/PassGuard/PassGuard.Models/bin/Debug/net8.0/PassGuard.Models.dll
+/Users/emmanuelolu/backend/sd-330 - Advanced db & ORM/Assignment/PassGuard/PassGuard.Models/bin/Debug/net8.0/PassGuard.Models.pdb
+/Users/emmanuelolu/backend/sd-330 - Advanced db & ORM/Assignment/PassGuard/PassGuard.Models/obj/Debug/net8.0/PassGuard.Models.GeneratedMSBuildEditorConfig.editorconfig
+/Users/emmanuelolu/backend/sd-330 - Advanced db & ORM/Assignment/PassGuard/PassGuard.Models/obj/Debug/net8.0/PassGuard.Models.AssemblyInfoInputs.cache
+/Users/emmanuelolu/backend/sd-330 - Advanced db & ORM/Assignment/PassGuard/PassGuard.Models/obj/Debug/net8.0/PassGuard.Models.AssemblyInfo.cs
+/Users/emmanuelolu/backend/sd-330 - Advanced db & ORM/Assignment/PassGuard/PassGuard.Models/obj/Debug/net8.0/PassGuard.Models.csproj.CoreCompileInputs.cache
+/Users/emmanuelolu/backend/sd-330 - Advanced db & ORM/Assignment/PassGuard/PassGuard.Models/obj/Debug/net8.0/PassGuard.Models.sourcelink.json
+/Users/emmanuelolu/backend/sd-330 - Advanced db & ORM/Assignment/PassGuard/PassGuard.Models/obj/Debug/net8.0/PassGuard.Models.dll
+/Users/emmanuelolu/backend/sd-330 - Advanced db & ORM/Assignment/PassGuard/PassGuard.Models/obj/Debug/net8.0/refint/PassGuard.Models.dll
+/Users/emmanuelolu/backend/sd-330 - Advanced db & ORM/Assignment/PassGuard/PassGuard.Models/obj/Debug/net8.0/PassGuard.Models.pdb
+/Users/emmanuelolu/backend/sd-330 - Advanced db & ORM/Assignment/PassGuard/PassGuard.Models/obj/Debug/net8.0/ref/PassGuard.Models.dll

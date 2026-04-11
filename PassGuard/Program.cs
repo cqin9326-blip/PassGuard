@@ -20,6 +20,7 @@ namespace PassGuard
             // Repositories（数据层）
             builder.Services.AddScoped<EstateService>();
             builder.Services.AddScoped<HomeService>();
+            builder.Services.AddScoped<VisitorService>();
             builder.Services.AddScoped<VisitPassService>();
             builder.Services.AddScoped<GateCheckInService>();
 
@@ -28,6 +29,7 @@ namespace PassGuard
             // Services
             builder.Services.AddScoped<EstateRepository>();
             builder.Services.AddScoped<HomeRepository>();
+            builder.Services.AddScoped<VisitorRepository>();
             builder.Services.AddScoped<VisitPassRepository>();
             builder.Services.AddScoped<GateCheckInRepository>();
             builder.Services.AddScoped<DashboardService>();

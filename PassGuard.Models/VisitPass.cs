@@ -4,9 +4,10 @@
     {
         public int VisitPassId { get; set; }
 
-        public string VisitorName { get; set; } = "";
-        public string VisitorPhone { get; set; } = "";
-
+        public int VisitorId { get; set; }
+        public Visitor Visitor { get; set; } = null!;
+        public string CodeHash { get; set; } = "";
+        public string CreatedByUserId { get; set; } = "";
         public string Status { get; set; } = "";
 
         public DateTime CreatedAt { get; set; }
@@ -15,6 +16,6 @@
         public int HomeId { get; set; }
         public Home Home { get; set; } = null!;
 
-        public List<GateCheckIn> GateCheckIns { get; set; } = new List<GateCheckIn>();
+        public GateCheckIn? GateCheckIn { get; set; }
     }
 }

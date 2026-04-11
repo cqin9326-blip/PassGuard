@@ -10,17 +10,20 @@ namespace PassGuard.Controllers
         private readonly VisitPassService _visitPassService;
         private readonly HomeService _homeService;
         private readonly EstateService _estateService;
+        private readonly VisitorService _visitorService;
         private readonly GateCheckInService _gateCheckInService;
 
         public VisitPassController(
             VisitPassService visitPassService,
             HomeService homeService,
             EstateService estateService,
+            VisitorService visitorService,
             GateCheckInService gateCheckInService)
         {
             _visitPassService = visitPassService;
             _homeService = homeService;
             _estateService = estateService;
+            _visitorService = visitorService;
             _gateCheckInService = gateCheckInService;
         }
 
@@ -60,7 +63,7 @@ namespace PassGuard.Controllers
             {
                 home = new Home
                 {
-                    OwnerName = model.OwnerName,
+                    OwnerUserId = model.OwnerUserId,
                     Address = model.Address,
                     EstateId = estate.EstateId
                 };
@@ -68,8 +71,20 @@ namespace PassGuard.Controllers
             }
             else
             {
-                home.OwnerName = model.OwnerName;
+                home.OwnerUserId = model.OwnerUserId;
                 _homeService.Update(home);
+            }
+
+            Visitor? visitor = _visitorService.GetByFullNameAndPhone(model.VisitorFullName, model.VisitorPhone);
+
+            if (visitor == null)
+            {
+                visitor = new Visitor
+                {
+                    FullName = model.VisitorFullName,
+                    Phone = model.VisitorPhone
+                };
+                _visitorService.Add(visitor);
             }
 
             DateTime now = DateTime.Now;
@@ -77,8 +92,9 @@ namespace PassGuard.Controllers
 
             VisitPass visitPass = new VisitPass
             {
-                VisitorName = model.VisitorName,
-                VisitorPhone = model.VisitorPhone,
+                VisitorId = visitor.VisitorId,
+                CodeHash = Guid.NewGuid().ToString("N"),
+                CreatedByUserId = model.OwnerUserId,
                 HomeId = home.HomeId,
                 CreatedAt = now,
                 ExpiresAt = expire,
@@ -92,7 +108,8 @@ namespace PassGuard.Controllers
                 VisitPassId = visitPass.VisitPassId,
                 Result = "Approved",
                 CheckInTime = now,
-                Note = "Auto Created"
+                Note = "Auto Created",
+                SecurityUserId = "system"
             };
 
             _gateCheckInService.Add(gateCheckIn);
@@ -109,9 +126,7 @@ namespace PassGuard.Controllers
                 return NotFound();
             }
 
-            GateCheckIn? latestCheckIn = visitPass.GateCheckIns
-                .OrderByDescending(g => g.CheckInTime)
-                .FirstOrDefault();
+            GateCheckIn? latestCheckIn = visitPass.GateCheckIn;
 
             AccessViewModel model = new AccessViewModel
             {
@@ -120,16 +135,19 @@ namespace PassGuard.Controllers
                 GateCheckInId = latestCheckIn?.GateCheckInId,
 
                 EstateName = visitPass.Home.Estate.EstateName,
-                OwnerName = visitPass.Home.OwnerName,
+                OwnerUserId = visitPass.Home.OwnerUserId,
                 Address = visitPass.Home.Address,
 
-                VisitorName = visitPass.VisitorName,
-                VisitorPhone = visitPass.VisitorPhone,
+                VisitorFullName = visitPass.Visitor.FullName,
+                VisitorPhone = visitPass.Visitor.Phone,
 
+                CodeHash = visitPass.CodeHash,
+                CreatedByUserId = visitPass.CreatedByUserId,
                 Status = visitPass.Status,
                 CreatedAt = visitPass.CreatedAt,
                 ExpiresAt = visitPass.ExpiresAt,
 
+                SecurityUserId = latestCheckIn?.SecurityUserId ?? "",
                 CheckInResult = latestCheckIn?.Result ?? "",
                 CheckInTime = latestCheckIn?.CheckInTime,
                 CheckInNote = latestCheckIn?.Note ?? ""
@@ -171,13 +189,32 @@ namespace PassGuard.Controllers
                 return NotFound();
             }
 
-            home.OwnerName = model.OwnerName;
+            home.OwnerUserId = model.OwnerUserId;
             home.Address = model.Address;
             home.EstateId = estate.EstateId;
             _homeService.Update(home);
 
-            visitPass.VisitorName = model.VisitorName;
-            visitPass.VisitorPhone = model.VisitorPhone;
+            Visitor? visitor = _visitorService.GetById(visitPass.VisitorId);
+
+            if (visitor == null)
+            {
+                visitor = new Visitor
+                {
+                    FullName = model.VisitorFullName,
+                    Phone = model.VisitorPhone
+                };
+                _visitorService.Add(visitor);
+                visitPass.VisitorId = visitor.VisitorId;
+            }
+            else
+            {
+                visitor.FullName = model.VisitorFullName;
+                visitor.Phone = model.VisitorPhone;
+                _visitorService.Update(visitor);
+            }
+
+            visitPass.CodeHash = model.CodeHash;
+            visitPass.CreatedByUserId = model.CreatedByUserId;
             visitPass.Status = model.Status;
             visitPass.CreatedAt = model.CreatedAt;
             visitPass.ExpiresAt = model.ExpiresAt;
@@ -201,7 +238,8 @@ namespace PassGuard.Controllers
                     VisitPassId = visitPass.VisitPassId,
                     Result = model.CheckInResult,
                     CheckInTime = model.CheckInTime ?? DateTime.Now,
-                    Note = model.CheckInNote
+                    Note = model.CheckInNote,
+                    SecurityUserId = model.SecurityUserId
                 };
                 _gateCheckInService.Add(gateCheckIn);
             }
@@ -210,6 +248,7 @@ namespace PassGuard.Controllers
                 gateCheckIn.Result = model.CheckInResult;
                 gateCheckIn.CheckInTime = model.CheckInTime ?? DateTime.Now;
                 gateCheckIn.Note = model.CheckInNote;
+                gateCheckIn.SecurityUserId = model.SecurityUserId;
                 _gateCheckInService.Update(gateCheckIn);
             }
 

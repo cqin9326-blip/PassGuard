@@ -1,43 +1,37 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\12489\\Desktop\\PassGuard\\PassGuard\\PassGuard\\PassGuard.csproj": {}
+    "/Users/emmanuelolu/backend/sd-330 - Advanced db & ORM/Assignment/PassGuard/PassGuard/PassGuard.csproj": {}
   },
   "projects": {
-    "C:\\Users\\12489\\Desktop\\PassGuard\\PassGuard\\PassGuard.BLL\\PassGuard.BLL.csproj": {
+    "/Users/emmanuelolu/backend/sd-330 - Advanced db & ORM/Assignment/PassGuard/PassGuard.BLL/PassGuard.BLL.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\12489\\Desktop\\PassGuard\\PassGuard\\PassGuard.BLL\\PassGuard.BLL.csproj",
+        "projectUniqueName": "/Users/emmanuelolu/backend/sd-330 - Advanced db & ORM/Assignment/PassGuard/PassGuard.BLL/PassGuard.BLL.csproj",
         "projectName": "PassGuard.BLL",
-        "projectPath": "C:\\Users\\12489\\Desktop\\PassGuard\\PassGuard\\PassGuard.BLL\\PassGuard.BLL.csproj",
-        "packagesPath": "C:\\Users\\12489\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\12489\\Desktop\\PassGuard\\PassGuard\\PassGuard.BLL\\obj\\",
+        "projectPath": "/Users/emmanuelolu/backend/sd-330 - Advanced db & ORM/Assignment/PassGuard/PassGuard.BLL/PassGuard.BLL.csproj",
+        "packagesPath": "/Users/emmanuelolu/.nuget/packages/",
+        "outputPath": "/Users/emmanuelolu/backend/sd-330 - Advanced db & ORM/Assignment/PassGuard/PassGuard.BLL/obj/",
         "projectStyle": "PackageReference",
-        "fallbackFolders": [
-          "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
-        ],
         "configFilePaths": [
-          "C:\\Users\\12489\\AppData\\Roaming\\NuGet\\NuGet.Config",
-          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
-          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
+          "/Users/emmanuelolu/.nuget/NuGet/NuGet.Config"
         ],
         "originalTargetFrameworks": [
           "net8.0"
         ],
         "sources": {
-          "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
-          "C:\\Program Files\\dotnet\\library-packs": {},
+          "/usr/local/share/dotnet/library-packs": {},
           "https://api.nuget.org/v3/index.json": {}
         },
         "frameworks": {
           "net8.0": {
             "targetAlias": "net8.0",
             "projectReferences": {
-              "C:\\Users\\12489\\Desktop\\PassGuard\\PassGuard\\PassGuard.DAL\\PassGuard.DAL.csproj": {
-                "projectPath": "C:\\Users\\12489\\Desktop\\PassGuard\\PassGuard\\PassGuard.DAL\\PassGuard.DAL.csproj"
+              "/Users/emmanuelolu/backend/sd-330 - Advanced db & ORM/Assignment/PassGuard/PassGuard.DAL/PassGuard.DAL.csproj": {
+                "projectPath": "/Users/emmanuelolu/backend/sd-330 - Advanced db & ORM/Assignment/PassGuard/PassGuard.DAL/PassGuard.DAL.csproj"
               },
-              "C:\\Users\\12489\\Desktop\\PassGuard\\PassGuard\\PassGuard.Models\\PassGuard.Models.csproj": {
-                "projectPath": "C:\\Users\\12489\\Desktop\\PassGuard\\PassGuard\\PassGuard.Models\\PassGuard.Models.csproj"
+              "/Users/emmanuelolu/backend/sd-330 - Advanced db & ORM/Assignment/PassGuard/PassGuard.Models/PassGuard.Models.csproj": {
+                "projectPath": "/Users/emmanuelolu/backend/sd-330 - Advanced db & ORM/Assignment/PassGuard/PassGuard.Models/PassGuard.Models.csproj"
               }
             }
           }
@@ -51,8 +45,7 @@
           "enableAudit": "true",
           "auditLevel": "low",
           "auditMode": "direct"
-        },
-        "SdkAnalysisLevel": "10.0.200"
+        }
       },
       "frameworks": {
         "net8.0": {
@@ -83,41 +76,35 @@
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\10.0.201/PortableRuntimeIdentifierGraph.json"
+          "runtimeIdentifierGraphPath": "/usr/local/share/dotnet/sdk/8.0.416/PortableRuntimeIdentifierGraph.json"
         }
       }
     },
-    "C:\\Users\\12489\\Desktop\\PassGuard\\PassGuard\\PassGuard.DAL\\PassGuard.DAL.csproj": {
+    "/Users/emmanuelolu/backend/sd-330 - Advanced db & ORM/Assignment/PassGuard/PassGuard.DAL/PassGuard.DAL.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\12489\\Desktop\\PassGuard\\PassGuard\\PassGuard.DAL\\PassGuard.DAL.csproj",
+        "projectUniqueName": "/Users/emmanuelolu/backend/sd-330 - Advanced db & ORM/Assignment/PassGuard/PassGuard.DAL/PassGuard.DAL.csproj",
         "projectName": "PassGuard.DAL",
-        "projectPath": "C:\\Users\\12489\\Desktop\\PassGuard\\PassGuard\\PassGuard.DAL\\PassGuard.DAL.csproj",
-        "packagesPath": "C:\\Users\\12489\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\12489\\Desktop\\PassGuard\\PassGuard\\PassGuard.DAL\\obj\\",
+        "projectPath": "/Users/emmanuelolu/backend/sd-330 - Advanced db & ORM/Assignment/PassGuard/PassGuard.DAL/PassGuard.DAL.csproj",
+        "packagesPath": "/Users/emmanuelolu/.nuget/packages/",
+        "outputPath": "/Users/emmanuelolu/backend/sd-330 - Advanced db & ORM/Assignment/PassGuard/PassGuard.DAL/obj/",
         "projectStyle": "PackageReference",
-        "fallbackFolders": [
-          "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
-        ],
         "configFilePaths": [
-          "C:\\Users\\12489\\AppData\\Roaming\\NuGet\\NuGet.Config",
-          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
-          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
+          "/Users/emmanuelolu/.nuget/NuGet/NuGet.Config"
         ],
         "originalTargetFrameworks": [
           "net8.0"
         ],
         "sources": {
-          "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
-          "C:\\Program Files\\dotnet\\library-packs": {},
+          "/usr/local/share/dotnet/library-packs": {},
           "https://api.nuget.org/v3/index.json": {}
         },
         "frameworks": {
           "net8.0": {
             "targetAlias": "net8.0",
             "projectReferences": {
-              "C:\\Users\\12489\\Desktop\\PassGuard\\PassGuard\\PassGuard.Models\\PassGuard.Models.csproj": {
-                "projectPath": "C:\\Users\\12489\\Desktop\\PassGuard\\PassGuard\\PassGuard.Models\\PassGuard.Models.csproj"
+              "/Users/emmanuelolu/backend/sd-330 - Advanced db & ORM/Assignment/PassGuard/PassGuard.Models/PassGuard.Models.csproj": {
+                "projectPath": "/Users/emmanuelolu/backend/sd-330 - Advanced db & ORM/Assignment/PassGuard/PassGuard.Models/PassGuard.Models.csproj"
               }
             }
           }
@@ -131,8 +118,7 @@
           "enableAudit": "true",
           "auditLevel": "low",
           "auditMode": "direct"
-        },
-        "SdkAnalysisLevel": "10.0.200"
+        }
       },
       "frameworks": {
         "net8.0": {
@@ -169,33 +155,27 @@
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\10.0.201/PortableRuntimeIdentifierGraph.json"
+          "runtimeIdentifierGraphPath": "/usr/local/share/dotnet/sdk/8.0.416/PortableRuntimeIdentifierGraph.json"
         }
       }
     },
-    "C:\\Users\\12489\\Desktop\\PassGuard\\PassGuard\\PassGuard.Models\\PassGuard.Models.csproj": {
+    "/Users/emmanuelolu/backend/sd-330 - Advanced db & ORM/Assignment/PassGuard/PassGuard.Models/PassGuard.Models.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\12489\\Desktop\\PassGuard\\PassGuard\\PassGuard.Models\\PassGuard.Models.csproj",
+        "projectUniqueName": "/Users/emmanuelolu/backend/sd-330 - Advanced db & ORM/Assignment/PassGuard/PassGuard.Models/PassGuard.Models.csproj",
         "projectName": "PassGuard.Models",
-        "projectPath": "C:\\Users\\12489\\Desktop\\PassGuard\\PassGuard\\PassGuard.Models\\PassGuard.Models.csproj",
-        "packagesPath": "C:\\Users\\12489\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\12489\\Desktop\\PassGuard\\PassGuard\\PassGuard.Models\\obj\\",
+        "projectPath": "/Users/emmanuelolu/backend/sd-330 - Advanced db & ORM/Assignment/PassGuard/PassGuard.Models/PassGuard.Models.csproj",
+        "packagesPath": "/Users/emmanuelolu/.nuget/packages/",
+        "outputPath": "/Users/emmanuelolu/backend/sd-330 - Advanced db & ORM/Assignment/PassGuard/PassGuard.Models/obj/",
         "projectStyle": "PackageReference",
-        "fallbackFolders": [
-          "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
-        ],
         "configFilePaths": [
-          "C:\\Users\\12489\\AppData\\Roaming\\NuGet\\NuGet.Config",
-          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
-          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
+          "/Users/emmanuelolu/.nuget/NuGet/NuGet.Config"
         ],
         "originalTargetFrameworks": [
           "net8.0"
         ],
         "sources": {
-          "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
-          "C:\\Program Files\\dotnet\\library-packs": {},
+          "/usr/local/share/dotnet/library-packs": {},
           "https://api.nuget.org/v3/index.json": {}
         },
         "frameworks": {
@@ -213,8 +193,7 @@
           "enableAudit": "true",
           "auditLevel": "low",
           "auditMode": "direct"
-        },
-        "SdkAnalysisLevel": "10.0.200"
+        }
       },
       "frameworks": {
         "net8.0": {
@@ -235,47 +214,41 @@
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\10.0.201/PortableRuntimeIdentifierGraph.json"
+          "runtimeIdentifierGraphPath": "/usr/local/share/dotnet/sdk/8.0.416/PortableRuntimeIdentifierGraph.json"
         }
       }
     },
-    "C:\\Users\\12489\\Desktop\\PassGuard\\PassGuard\\PassGuard\\PassGuard.csproj": {
+    "/Users/emmanuelolu/backend/sd-330 - Advanced db & ORM/Assignment/PassGuard/PassGuard/PassGuard.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\12489\\Desktop\\PassGuard\\PassGuard\\PassGuard\\PassGuard.csproj",
+        "projectUniqueName": "/Users/emmanuelolu/backend/sd-330 - Advanced db & ORM/Assignment/PassGuard/PassGuard/PassGuard.csproj",
         "projectName": "PassGuard",
-        "projectPath": "C:\\Users\\12489\\Desktop\\PassGuard\\PassGuard\\PassGuard\\PassGuard.csproj",
-        "packagesPath": "C:\\Users\\12489\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\12489\\Desktop\\PassGuard\\PassGuard\\PassGuard\\obj\\",
+        "projectPath": "/Users/emmanuelolu/backend/sd-330 - Advanced db & ORM/Assignment/PassGuard/PassGuard/PassGuard.csproj",
+        "packagesPath": "/Users/emmanuelolu/.nuget/packages/",
+        "outputPath": "/Users/emmanuelolu/backend/sd-330 - Advanced db & ORM/Assignment/PassGuard/PassGuard/obj/",
         "projectStyle": "PackageReference",
-        "fallbackFolders": [
-          "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
-        ],
         "configFilePaths": [
-          "C:\\Users\\12489\\AppData\\Roaming\\NuGet\\NuGet.Config",
-          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
-          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
+          "/Users/emmanuelolu/.nuget/NuGet/NuGet.Config"
         ],
         "originalTargetFrameworks": [
           "net8.0"
         ],
         "sources": {
-          "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
-          "C:\\Program Files\\dotnet\\library-packs": {},
+          "/usr/local/share/dotnet/library-packs": {},
           "https://api.nuget.org/v3/index.json": {}
         },
         "frameworks": {
           "net8.0": {
             "targetAlias": "net8.0",
             "projectReferences": {
-              "C:\\Users\\12489\\Desktop\\PassGuard\\PassGuard\\PassGuard.BLL\\PassGuard.BLL.csproj": {
-                "projectPath": "C:\\Users\\12489\\Desktop\\PassGuard\\PassGuard\\PassGuard.BLL\\PassGuard.BLL.csproj"
+              "/Users/emmanuelolu/backend/sd-330 - Advanced db & ORM/Assignment/PassGuard/PassGuard.BLL/PassGuard.BLL.csproj": {
+                "projectPath": "/Users/emmanuelolu/backend/sd-330 - Advanced db & ORM/Assignment/PassGuard/PassGuard.BLL/PassGuard.BLL.csproj"
               },
-              "C:\\Users\\12489\\Desktop\\PassGuard\\PassGuard\\PassGuard.DAL\\PassGuard.DAL.csproj": {
-                "projectPath": "C:\\Users\\12489\\Desktop\\PassGuard\\PassGuard\\PassGuard.DAL\\PassGuard.DAL.csproj"
+              "/Users/emmanuelolu/backend/sd-330 - Advanced db & ORM/Assignment/PassGuard/PassGuard.DAL/PassGuard.DAL.csproj": {
+                "projectPath": "/Users/emmanuelolu/backend/sd-330 - Advanced db & ORM/Assignment/PassGuard/PassGuard.DAL/PassGuard.DAL.csproj"
               },
-              "C:\\Users\\12489\\Desktop\\PassGuard\\PassGuard\\PassGuard.Models\\PassGuard.Models.csproj": {
-                "projectPath": "C:\\Users\\12489\\Desktop\\PassGuard\\PassGuard\\PassGuard.Models\\PassGuard.Models.csproj"
+              "/Users/emmanuelolu/backend/sd-330 - Advanced db & ORM/Assignment/PassGuard/PassGuard.Models/PassGuard.Models.csproj": {
+                "projectPath": "/Users/emmanuelolu/backend/sd-330 - Advanced db & ORM/Assignment/PassGuard/PassGuard.Models/PassGuard.Models.csproj"
               }
             }
           }
@@ -289,8 +262,7 @@
           "enableAudit": "true",
           "auditLevel": "low",
           "auditMode": "direct"
-        },
-        "SdkAnalysisLevel": "10.0.200"
+        }
       },
       "frameworks": {
         "net8.0": {
@@ -330,7 +302,7 @@
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\10.0.201/PortableRuntimeIdentifierGraph.json"
+          "runtimeIdentifierGraphPath": "/usr/local/share/dotnet/sdk/8.0.416/PortableRuntimeIdentifierGraph.json"
         }
       }
     }

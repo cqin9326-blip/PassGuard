@@ -9,17 +9,20 @@ namespace PassGuard.Controllers
     {
         private readonly HomeService _homeService;
         private readonly EstateService _estateService;
+        private readonly VisitorService _visitorService;
         private readonly VisitPassService _visitPassService;
         private readonly GateCheckInService _gateCheckInService;
 
         public HomeController(
             HomeService homeService,
             EstateService estateService,
+            VisitorService visitorService,
             VisitPassService visitPassService,
             GateCheckInService gateCheckInService)
         {
             _homeService = homeService;
             _estateService = estateService;
+            _visitorService = visitorService;
             _visitPassService = visitPassService;
             _gateCheckInService = gateCheckInService;
         }
@@ -56,20 +59,33 @@ namespace PassGuard.Controllers
 
             Home home = new Home
             {
-                OwnerName = model.OwnerName,
+                OwnerUserId = model.OwnerUserId,
                 Address = model.Address,
                 EstateId = estate.EstateId
             };
 
             _homeService.Add(home);
 
+            Visitor? visitor = _visitorService.GetByFullNameAndPhone(model.VisitorFullName, model.VisitorPhone);
+
+            if (visitor == null)
+            {
+                visitor = new Visitor
+                {
+                    FullName = model.VisitorFullName,
+                    Phone = model.VisitorPhone
+                };
+                _visitorService.Add(visitor);
+            }
+
             DateTime now = DateTime.Now;
             DateTime expire = now.AddDays(1);
 
             VisitPass visitPass = new VisitPass
             {
-                VisitorName = model.VisitorName,
-                VisitorPhone = model.VisitorPhone,
+                VisitorId = visitor.VisitorId,
+                CodeHash = Guid.NewGuid().ToString("N"),
+                CreatedByUserId = model.OwnerUserId,
                 HomeId = home.HomeId,
                 CreatedAt = now,
                 ExpiresAt = expire,
@@ -83,7 +99,8 @@ namespace PassGuard.Controllers
                 VisitPassId = visitPass.VisitPassId,
                 Result = "Approved",
                 CheckInTime = now,
-                Note = "Auto Created"
+                Note = "Auto Created",
+                SecurityUserId = "system"
             };
 
             _gateCheckInService.Add(gateCheckIn);
@@ -106,10 +123,10 @@ namespace PassGuard.Controllers
             {
                 HomeId = home.HomeId,
                 EstateName = home.Estate.EstateName,
-                OwnerName = home.OwnerName,
+                OwnerUserId = home.OwnerUserId,
                 Address = home.Address,
-                VisitorName = visitPass?.VisitorName ?? "",
-                VisitorPhone = visitPass?.VisitorPhone ?? ""
+                VisitorFullName = visitPass?.Visitor.FullName ?? "",
+                VisitorPhone = visitPass?.Visitor.Phone ?? ""
             };
 
             return View(model);
@@ -141,7 +158,7 @@ namespace PassGuard.Controllers
                 return NotFound();
             }
 
-            home.OwnerName = model.OwnerName;
+            home.OwnerUserId = model.OwnerUserId;
             home.Address = model.Address;
             home.EstateId = estate.EstateId;
 
@@ -151,8 +168,26 @@ namespace PassGuard.Controllers
 
             if (visitPass != null)
             {
-                visitPass.VisitorName = model.VisitorName;
-                visitPass.VisitorPhone = model.VisitorPhone;
+                Visitor? visitor = _visitorService.GetById(visitPass.VisitorId);
+
+                if (visitor == null)
+                {
+                    visitor = new Visitor
+                    {
+                        FullName = model.VisitorFullName,
+                        Phone = model.VisitorPhone
+                    };
+                    _visitorService.Add(visitor);
+                    visitPass.VisitorId = visitor.VisitorId;
+                }
+                else
+                {
+                    visitor.FullName = model.VisitorFullName;
+                    visitor.Phone = model.VisitorPhone;
+                    _visitorService.Update(visitor);
+                }
+
+                visitPass.CreatedByUserId = model.OwnerUserId;
                 _visitPassService.Update(visitPass);
             }
 

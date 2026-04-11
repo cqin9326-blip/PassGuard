@@ -61,12 +61,18 @@ namespace PassGuard.DAL.Migrations
                         .HasMaxLength(30)
                         .HasColumnType("nvarchar(30)");
 
+                    b.Property<string>("SecurityUserId")
+                        .IsRequired()
+                        .HasMaxLength(450)
+                        .HasColumnType("nvarchar(450)");
+
                     b.Property<int>("VisitPassId")
                         .HasColumnType("int");
 
                     b.HasKey("GateCheckInId");
 
-                    b.HasIndex("VisitPassId");
+                    b.HasIndex("VisitPassId")
+                        .IsUnique();
 
                     b.ToTable("GateCheckIns");
                 });
@@ -87,10 +93,10 @@ namespace PassGuard.DAL.Migrations
                     b.Property<int>("EstateId")
                         .HasColumnType("int");
 
-                    b.Property<string>("OwnerName")
+                    b.Property<string>("OwnerUserId")
                         .IsRequired()
-                        .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
+                        .HasMaxLength(450)
+                        .HasColumnType("nvarchar(450)");
 
                     b.HasKey("HomeId");
 
@@ -107,8 +113,18 @@ namespace PassGuard.DAL.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("VisitPassId"));
 
+                    b.Property<string>("CodeHash")
+                        .IsRequired()
+                        .HasMaxLength(256)
+                        .HasColumnType("nvarchar(256)");
+
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
+
+                    b.Property<string>("CreatedByUserId")
+                        .IsRequired()
+                        .HasMaxLength(450)
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<DateTime>("ExpiresAt")
                         .HasColumnType("datetime2");
@@ -121,28 +137,46 @@ namespace PassGuard.DAL.Migrations
                         .HasMaxLength(30)
                         .HasColumnType("nvarchar(30)");
 
-                    b.Property<string>("VisitorName")
-                        .IsRequired()
-                        .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
-
-                    b.Property<string>("VisitorPhone")
-                        .IsRequired()
-                        .HasMaxLength(30)
-                        .HasColumnType("nvarchar(30)");
+                    b.Property<int>("VisitorId")
+                        .HasColumnType("int");
 
                     b.HasKey("VisitPassId");
 
                     b.HasIndex("HomeId");
 
+                    b.HasIndex("VisitorId");
+
                     b.ToTable("VisitPasses");
+                });
+
+            modelBuilder.Entity("PassGuard.Models.Visitor", b =>
+                {
+                    b.Property<int>("VisitorId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("VisitorId"));
+
+                    b.Property<string>("FullName")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<string>("Phone")
+                        .IsRequired()
+                        .HasMaxLength(30)
+                        .HasColumnType("nvarchar(30)");
+
+                    b.HasKey("VisitorId");
+
+                    b.ToTable("Visitors");
                 });
 
             modelBuilder.Entity("PassGuard.Models.GateCheckIn", b =>
                 {
                     b.HasOne("PassGuard.Models.VisitPass", "VisitPass")
-                        .WithMany("GateCheckIns")
-                        .HasForeignKey("VisitPassId")
+                        .WithOne("GateCheckIn")
+                        .HasForeignKey("PassGuard.Models.GateCheckIn", "VisitPassId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
@@ -168,7 +202,15 @@ namespace PassGuard.DAL.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
+                    b.HasOne("PassGuard.Models.Visitor", "Visitor")
+                        .WithMany("VisitPasses")
+                        .HasForeignKey("VisitorId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
                     b.Navigation("Home");
+
+                    b.Navigation("Visitor");
                 });
 
             modelBuilder.Entity("PassGuard.Models.Estate", b =>
@@ -183,7 +225,12 @@ namespace PassGuard.DAL.Migrations
 
             modelBuilder.Entity("PassGuard.Models.VisitPass", b =>
                 {
-                    b.Navigation("GateCheckIns");
+                    b.Navigation("GateCheckIn");
+                });
+
+            modelBuilder.Entity("PassGuard.Models.Visitor", b =>
+                {
+                    b.Navigation("VisitPasses");
                 });
 #pragma warning restore 612, 618
         }

@@ -20,14 +20,15 @@ namespace PassGuard.Controllers
         }
 
         [HttpPost]
-        public IActionResult Create(int visitPassId, string result, DateTime checkInTime, string note)
+        public IActionResult Create(int visitPassId, string result, DateTime checkInTime, string note, string securityUserId)
         {
             GateCheckIn gateCheckIn = new GateCheckIn
             {
                 VisitPassId = visitPassId,
                 Result = result,
                 CheckInTime = checkInTime,
-                Note = note
+                Note = note,
+                SecurityUserId = string.IsNullOrWhiteSpace(securityUserId) ? "system" : securityUserId
             };
 
             _gateCheckInService.Add(gateCheckIn);

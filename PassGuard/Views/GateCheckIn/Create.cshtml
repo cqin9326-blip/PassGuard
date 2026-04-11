@@ -1,19 +1,36 @@
 ﻿@model PassGuard.Models.GateCheckIn
 
-<h2>Edit Check-In</h2>
+@{
+    ViewData["Title"] = "Create Check-In";
+}
 
-<form asp-action="Edit">
+<h2>Create Check-In</h2>
 
-    <input type="hidden" asp-for="GateCheckInId" />
+<form asp-action="Create" method="post">
+    <input asp-for="VisitPassId" type="hidden" value="@ViewBag.VisitPassId" />
 
-    <label>Time</label>
-    <input asp-for="CheckInTime" type="datetime-local" />
+    <div class="mb-3">
+        <label asp-for="Result" class="form-label">Result</label>
+        <select asp-for="Result" class="form-control">
+            <option value="Approved">Approved</option>
+            <option value="Denied">Denied</option>
+        </select>
+    </div>
 
-    <label>Result</label>
-    <input asp-for="Result" />
+    <div class="mb-3">
+        <label asp-for="CheckInTime" class="form-label">Check-In Time</label>
+        <input asp-for="CheckInTime" type="datetime-local" class="form-control" />
+    </div>
 
-    <label>Note</label>
-    <input asp-for="Note" />
+    <div class="mb-3">
+        <label asp-for="SecurityUserId" class="form-label">Security User Id</label>
+        <input asp-for="SecurityUserId" class="form-control" />
+    </div>
 
-    <button type="submit">Update</button>
+    <div class="mb-3">
+        <label asp-for="Note" class="form-label">Note</label>
+        <input asp-for="Note" class="form-control" />
+    </div>
+
+    <button type="submit" class="btn btn-success">Create</button>
 </form>
