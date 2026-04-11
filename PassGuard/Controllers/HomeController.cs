@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using PassGuard.BLL;
 using PassGuard.Models;
@@ -5,6 +6,7 @@ using PassGuard.Models.ViewModels;
 
 namespace PassGuard.Controllers
 {
+    [Authorize(Roles = "Admin")]
     public class HomeController : Controller
     {
         private readonly HomeService _homeService;

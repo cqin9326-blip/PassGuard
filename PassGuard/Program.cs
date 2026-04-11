@@ -1,12 +1,14 @@
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using PassGuard.BLL;
 using PassGuard.DAL;
+using PassGuard.Infrastructure;
 
 namespace PassGuard
 {
     public class Program
     {
-        public static void Main(string[] args)
+        public static async Task Main(string[] args)
         {
             var builder = WebApplication.CreateBuilder(args);
 
@@ -16,6 +18,24 @@ namespace PassGuard
             // Database connection
             builder.Services.AddDbContext<PassGuardContext>(options =>
                 options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+
+            builder.Services
+                .AddIdentity<ApplicationUser, IdentityRole>(options =>
+                {
+                    options.Password.RequireDigit = true;
+                    options.Password.RequireUppercase = true;
+                    options.Password.RequireLowercase = true;
+                    options.Password.RequireNonAlphanumeric = false;
+                    options.Password.RequiredLength = 8;
+                })
+                .AddEntityFrameworkStores<PassGuardContext>()
+                .AddDefaultTokenProviders();
+
+            builder.Services.ConfigureApplicationCookie(options =>
+            {
+                options.LoginPath = "/Account/Login";
+                options.AccessDeniedPath = "/Account/AccessDenied";
+            });
 
             // Repositories（数据层）
             builder.Services.AddScoped<EstateService>();
@@ -46,11 +66,14 @@ namespace PassGuard
 
             app.UseRouting();
 
+            app.UseAuthentication();
             app.UseAuthorization();
+
+            await IdentitySeedData.SeedAsync(app.Services);
 
             app.MapControllerRoute(
                 name: "default",
-                pattern: "{controller=Home}/{action=Index}/{id?}");
+                pattern: "{controller=VisitPass}/{action=Index}/{id?}");
 
             app.Run();
         }

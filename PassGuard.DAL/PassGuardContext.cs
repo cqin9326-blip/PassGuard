@@ -1,9 +1,10 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore;
 using PassGuard.Models;
 
 namespace PassGuard.DAL
 {
-    public class PassGuardContext : DbContext
+    public class PassGuardContext : IdentityDbContext<ApplicationUser>
     {
         public PassGuardContext(DbContextOptions<PassGuardContext> options)
             : base(options)

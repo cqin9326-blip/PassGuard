@@ -1,10 +1,13 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using System.Security.Claims;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using PassGuard.BLL;
 using PassGuard.Models;
 using PassGuard.Models.ViewModels;
 
 namespace PassGuard.Controllers
 {
+    [Authorize]
     public class VisitPassController : Controller
     {
         private readonly VisitPassService _visitPassService;
@@ -27,24 +30,30 @@ namespace PassGuard.Controllers
             _gateCheckInService = gateCheckInService;
         }
 
+        private string CurrentUserId => User.FindFirstValue(ClaimTypes.NameIdentifier) ?? "";
+
         public IActionResult Index()
         {
             var visitPasses = _visitPassService.GetAllWithDetails();
             return View(visitPasses);
         }
 
+        [Authorize(Roles = "Admin,HomeOwner")]
         public IActionResult Create()
         {
             return View();
         }
 
         [HttpPost]
+        [Authorize(Roles = "Admin,HomeOwner")]
         public IActionResult Create(AccessViewModel model)
         {
             if (!ModelState.IsValid)
             {
                 return View(model);
             }
+
+            string ownerUserId = User.IsInRole("HomeOwner") ? CurrentUserId : model.OwnerUserId;
 
             Estate? estate = _estateService.GetByName(model.EstateName);
 
@@ -63,7 +72,7 @@ namespace PassGuard.Controllers
             {
                 home = new Home
                 {
-                    OwnerUserId = model.OwnerUserId,
+                    OwnerUserId = ownerUserId,
                     Address = model.Address,
                     EstateId = estate.EstateId
                 };
@@ -71,7 +80,7 @@ namespace PassGuard.Controllers
             }
             else
             {
-                home.OwnerUserId = model.OwnerUserId;
+                home.OwnerUserId = ownerUserId;
                 _homeService.Update(home);
             }
 
@@ -94,7 +103,7 @@ namespace PassGuard.Controllers
             {
                 VisitorId = visitor.VisitorId,
                 CodeHash = Guid.NewGuid().ToString("N"),
-                CreatedByUserId = model.OwnerUserId,
+                CreatedByUserId = CurrentUserId,
                 HomeId = home.HomeId,
                 CreatedAt = now,
                 ExpiresAt = expire,
@@ -109,7 +118,7 @@ namespace PassGuard.Controllers
                 Result = "Approved",
                 CheckInTime = now,
                 Note = "Auto Created",
-                SecurityUserId = "system"
+                SecurityUserId = User.IsInRole("Security") ? CurrentUserId : "system"
             };
 
             _gateCheckInService.Add(gateCheckIn);
@@ -117,6 +126,7 @@ namespace PassGuard.Controllers
             return RedirectToAction("Index");
         }
 
+        [Authorize(Roles = "Admin,HomeOwner")]
         public IActionResult Edit(int id)
         {
             VisitPass? visitPass = _visitPassService.GetFullDetails(id);
@@ -157,12 +167,15 @@ namespace PassGuard.Controllers
         }
 
         [HttpPost]
+        [Authorize(Roles = "Admin,HomeOwner")]
         public IActionResult Edit(AccessViewModel model)
         {
             if (!ModelState.IsValid)
             {
                 return View(model);
             }
+
+            string ownerUserId = User.IsInRole("HomeOwner") ? CurrentUserId : model.OwnerUserId;
 
             VisitPass? visitPass = _visitPassService.GetFullDetails(model.VisitPassId);
 
@@ -189,7 +202,7 @@ namespace PassGuard.Controllers
                 return NotFound();
             }
 
-            home.OwnerUserId = model.OwnerUserId;
+            home.OwnerUserId = ownerUserId;
             home.Address = model.Address;
             home.EstateId = estate.EstateId;
             _homeService.Update(home);
@@ -214,7 +227,7 @@ namespace PassGuard.Controllers
             }
 
             visitPass.CodeHash = model.CodeHash;
-            visitPass.CreatedByUserId = model.CreatedByUserId;
+            visitPass.CreatedByUserId = string.IsNullOrWhiteSpace(CurrentUserId) ? model.CreatedByUserId : CurrentUserId;
             visitPass.Status = model.Status;
             visitPass.CreatedAt = model.CreatedAt;
             visitPass.ExpiresAt = model.ExpiresAt;
@@ -239,7 +252,7 @@ namespace PassGuard.Controllers
                     Result = model.CheckInResult,
                     CheckInTime = model.CheckInTime ?? DateTime.Now,
                     Note = model.CheckInNote,
-                    SecurityUserId = model.SecurityUserId
+                    SecurityUserId = User.IsInRole("Security") ? CurrentUserId : model.SecurityUserId
                 };
                 _gateCheckInService.Add(gateCheckIn);
             }
@@ -248,7 +261,7 @@ namespace PassGuard.Controllers
                 gateCheckIn.Result = model.CheckInResult;
                 gateCheckIn.CheckInTime = model.CheckInTime ?? DateTime.Now;
                 gateCheckIn.Note = model.CheckInNote;
-                gateCheckIn.SecurityUserId = model.SecurityUserId;
+                gateCheckIn.SecurityUserId = User.IsInRole("Security") ? CurrentUserId : model.SecurityUserId;
                 _gateCheckInService.Update(gateCheckIn);
             }
 
@@ -267,6 +280,7 @@ namespace PassGuard.Controllers
             return View(visitPass);
         }
 
+        [Authorize(Roles = "Admin,HomeOwner")]
         public IActionResult Delete(int id)
         {
             _visitPassService.Delete(id);

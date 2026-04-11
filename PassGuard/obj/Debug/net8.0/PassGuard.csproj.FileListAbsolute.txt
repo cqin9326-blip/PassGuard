@@ -173,3 +173,8 @@
 /Users/emmanuelolu/backend/sd-330 - Advanced db & ORM/Assignment/PassGuard/PassGuard/obj/Debug/net8.0/PassGuard.pdb
 /Users/emmanuelolu/backend/sd-330 - Advanced db & ORM/Assignment/PassGuard/PassGuard/obj/Debug/net8.0/PassGuard.genruntimeconfig.cache
 /Users/emmanuelolu/backend/sd-330 - Advanced db & ORM/Assignment/PassGuard/PassGuard/obj/Debug/net8.0/ref/PassGuard.dll
+/Users/emmanuelolu/backend/sd-330 - Advanced db & ORM/Assignment/PassGuard/PassGuard/bin/Debug/net8.0/Microsoft.AspNetCore.Cryptography.Internal.dll
+/Users/emmanuelolu/backend/sd-330 - Advanced db & ORM/Assignment/PassGuard/PassGuard/bin/Debug/net8.0/Microsoft.AspNetCore.Cryptography.KeyDerivation.dll
+/Users/emmanuelolu/backend/sd-330 - Advanced db & ORM/Assignment/PassGuard/PassGuard/bin/Debug/net8.0/Microsoft.AspNetCore.Identity.EntityFrameworkCore.dll
+/Users/emmanuelolu/backend/sd-330 - Advanced db & ORM/Assignment/PassGuard/PassGuard/bin/Debug/net8.0/Microsoft.Extensions.Identity.Core.dll
+/Users/emmanuelolu/backend/sd-330 - Advanced db & ORM/Assignment/PassGuard/PassGuard/bin/Debug/net8.0/Microsoft.Extensions.Identity.Stores.dll

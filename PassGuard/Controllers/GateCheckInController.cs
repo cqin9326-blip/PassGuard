@@ -1,9 +1,12 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using System.Security.Claims;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using PassGuard.BLL;
 using PassGuard.Models;
 
 namespace PassGuard.Controllers
 {
+    [Authorize(Roles = "Admin,Security")]
     public class GateCheckInController : Controller
     {
         private readonly GateCheckInService _gateCheckInService;
@@ -16,6 +19,7 @@ namespace PassGuard.Controllers
         public IActionResult Create(int visitPassId)
         {
             ViewBag.VisitPassId = visitPassId;
+            ViewBag.SecurityUserId = User.FindFirstValue(ClaimTypes.NameIdentifier) ?? "";
             return View();
         }
 
@@ -28,7 +32,8 @@ namespace PassGuard.Controllers
                 Result = result,
                 CheckInTime = checkInTime,
                 Note = note,
-                SecurityUserId = string.IsNullOrWhiteSpace(securityUserId) ? "system" : securityUserId
+                SecurityUserId = User.FindFirstValue(ClaimTypes.NameIdentifier)
+                    ?? (string.IsNullOrWhiteSpace(securityUserId) ? "system" : securityUserId)
             };
 
             _gateCheckInService.Add(gateCheckIn);
@@ -44,6 +49,8 @@ namespace PassGuard.Controllers
             {
                 return NotFound();
             }
+
+            gateCheckIn.SecurityUserId ??= User.FindFirstValue(ClaimTypes.NameIdentifier) ?? "";
 
             return View(gateCheckIn);
         }
