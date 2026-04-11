@@ -31,11 +31,29 @@
                                 </li>
 
                                 <li class="nav-item">
+                                    <a class="nav-link text-dark" asp-controller="Estate" asp-action="Index">Estates</a>
+                                </li>
+
+                                <li class="nav-item">
                                     <a class="nav-link text-dark" asp-controller="Home" asp-action="Index">Property</a>
                                 </li>
 
                                 <li class="nav-item">
                                     <a class="nav-link text-dark" asp-controller="UserManagement" asp-action="Index">Users</a>
+                                </li>
+                            }
+
+                            @if (User.IsInRole("HomeOwner"))
+                            {
+                                <li class="nav-item">
+                                    <a class="nav-link text-dark" asp-controller="HomeOwner" asp-action="Dashboard">My Passes</a>
+                                </li>
+                            }
+
+                            @if (User.IsInRole("Security"))
+                            {
+                                <li class="nav-item">
+                                    <a class="nav-link text-dark" asp-controller="Security" asp-action="Panel">Security Panel</a>
                                 </li>
                             }
 

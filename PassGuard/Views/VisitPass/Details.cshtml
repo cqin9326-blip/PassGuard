@@ -32,6 +32,13 @@
 <p><strong>Created At:</strong> @Model.CreatedAt</p>
 <p><strong>Expires At:</strong> @Model.ExpiresAt</p>
 
+@if ((User.IsInRole("Admin") || User.IsInRole("HomeOwner")) && Model.Status == PassGuard.Models.PassStatuses.Active)
+{
+    <form asp-action="Revoke" asp-route-id="@Model.VisitPassId" method="post" class="mb-3">
+        <button type="submit" class="btn btn-outline-danger btn-sm">Revoke Pass</button>
+    </form>
+}
+
 @if (User.IsInRole("Admin") || User.IsInRole("Security"))
 {
     <p>

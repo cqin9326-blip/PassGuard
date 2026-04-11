@@ -1,0 +1,91 @@
+@model PassGuard.Models.ViewModels.SecurityPanelViewModel
+
+@{
+    ViewData["Title"] = "Security Panel";
+}
+
+<h2>Security Panel</h2>
+
+<p>
+    Today's Expected Visitors: @Model.ExpectedVisitorCount |
+    Checked In Today: @Model.CheckedInTodayCount
+</p>
+
+<p>
+    <a asp-controller="VisitPass" asp-action="Verify" class="btn btn-success">Verify Pass Code</a>
+</p>
+
+<hr />
+
+<h4>Expected Visitors</h4>
+
+@if (Model.ExpectedVisitors.Any())
+{
+    <table class="table table-bordered">
+        <thead>
+            <tr>
+                <th>Visitor</th>
+                <th>Phone</th>
+                <th>Estate</th>
+                <th>Home</th>
+                <th>Expires</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var pass in Model.ExpectedVisitors)
+            {
+                <tr>
+                    <td>@pass.Visitor.FullName</td>
+                    <td>@pass.Visitor.Phone</td>
+                    <td>@pass.Home.Estate.EstateName</td>
+                    <td>@pass.Home.Address</td>
+                    <td>@pass.ExpiresAt</td>
+                    <td>
+                        <a asp-controller="VisitPass" asp-action="Details" asp-route-id="@pass.VisitPassId">Details</a> |
+                        <a asp-controller="GateCheckIn" asp-action="Create" asp-route-visitPassId="@pass.VisitPassId">Record Check-In</a>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+else
+{
+    <p>No expected visitors right now.</p>
+}
+
+<hr />
+
+<h4>Recent Check-Ins</h4>
+
+@if (Model.RecentChecks.Any())
+{
+    <table class="table table-bordered">
+        <thead>
+            <tr>
+                <th>Visitor</th>
+                <th>Result</th>
+                <th>Time</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var pass in Model.RecentChecks)
+            {
+                <tr>
+                    <td>@pass.Visitor.FullName</td>
+                    <td>@pass.GateCheckIn?.Result</td>
+                    <td>@pass.GateCheckIn?.CheckInTime</td>
+                    <td>
+                        <a asp-controller="VisitPass" asp-action="Details" asp-route-id="@pass.VisitPassId">Details</a>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+else
+{
+    <p>No check-ins recorded today.</p>
+}

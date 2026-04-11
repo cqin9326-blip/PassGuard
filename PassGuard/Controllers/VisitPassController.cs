@@ -147,7 +147,7 @@ namespace PassGuard.Controllers
                 HomeId = home.HomeId,
                 CreatedAt = now,
                 ExpiresAt = expire,
-                Status = "Active"
+                Status = PassStatuses.Active
             };
 
             _visitPassService.Add(visitPass);
@@ -284,7 +284,10 @@ namespace PassGuard.Controllers
 
             visitPass.CodeHash = model.CodeHash;
             visitPass.CreatedByUserId = string.IsNullOrWhiteSpace(CurrentUserId) ? model.CreatedByUserId : CurrentUserId;
-            visitPass.Status = model.Status == "Revoked" ? "Revoked" : visitPass.Status;
+            if (string.Equals(model.Status, PassStatuses.Revoked, StringComparison.Ordinal))
+            {
+                _visitPassService.Revoke(visitPass);
+            }
             visitPass.CreatedAt = model.CreatedAt;
             visitPass.ExpiresAt = model.ExpiresAt;
             _visitPassService.Update(visitPass);
@@ -372,7 +375,7 @@ namespace PassGuard.Controllers
 
             string currentStatus = _visitPassService.NormalizeStatus(matchedPass);
 
-            if (currentStatus == "Active")
+            if (_visitPassService.CanBeAccepted(matchedPass))
             {
                 GateCheckIn? gateCheckIn = matchedPass.GateCheckIn;
 
@@ -398,7 +401,7 @@ namespace PassGuard.Controllers
                 }
 
                 matchedPass.GateCheckIn = gateCheckIn;
-                matchedPass.Status = "Used";
+                matchedPass.Status = PassStatuses.Used;
                 _visitPassService.Update(matchedPass);
 
                 model.Message = "Pass verified successfully. Visitor may enter.";
@@ -425,6 +428,27 @@ namespace PassGuard.Controllers
             model.IsMatch = false;
             model.VisitPass = _visitPassService.GetFullDetails(matchedPass.VisitPassId);
             return View(model);
+        }
+
+        [HttpPost]
+        [Authorize(Roles = "Admin,HomeOwner")]
+        [ValidateAntiForgeryToken]
+        public IActionResult Revoke(int id)
+        {
+            VisitPass? visitPass = _visitPassService.GetFullDetails(id);
+
+            if (visitPass == null)
+            {
+                return NotFound();
+            }
+
+            if (User.IsInRole("HomeOwner") && visitPass.CreatedByUserId != CurrentUserId)
+            {
+                return Forbid();
+            }
+
+            _visitPassService.Revoke(visitPass);
+            return RedirectToAction(nameof(Details), new { id });
         }
 
         [Authorize(Roles = "Admin,HomeOwner")]

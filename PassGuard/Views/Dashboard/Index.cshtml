@@ -13,6 +13,9 @@
     Total Homes: @Model.TotalHomes |
     Total Visitors: @Model.TotalVisitors |
     Active Passes: @Model.ActivePasses |
+    Used Passes: @Model.UsedPasses |
+    Expired Passes: @Model.ExpiredPasses |
+    Revoked Passes: @Model.RevokedPasses |
     Today Check-In Count: @Model.TodayCheckInCount
 </p>
 
@@ -47,3 +50,34 @@
         }
     </tbody>
 </table>
+
+<hr />
+
+<h4>Recent Activity</h4>
+
+@if (Model.RecentActivity.Any())
+{
+    <table class="table table-bordered">
+        <thead>
+            <tr>
+                <th>Event</th>
+                <th>Detail</th>
+                <th>Time</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model.RecentActivity)
+            {
+                <tr>
+                    <td>@item.Title</td>
+                    <td>@item.Detail</td>
+                    <td>@item.Timestamp</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+else
+{
+    <p>No recent activity found.</p>
+}

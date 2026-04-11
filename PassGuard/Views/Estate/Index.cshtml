@@ -1,0 +1,35 @@
+@model List<PassGuard.Models.Estate>
+
+@{
+    ViewData["Title"] = "Estates";
+}
+
+<h2>Estate Management</h2>
+
+<p>
+    <a asp-action="Create" class="btn btn-primary">Add Estate</a>
+</p>
+
+<table class="table table-bordered">
+    <thead>
+        <tr>
+            <th>Estate Name</th>
+            <th>Homes</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var estate in Model)
+        {
+            <tr>
+                <td>@estate.EstateName</td>
+                <td>@estate.Homes.Count</td>
+                <td>
+                    <a asp-action="Details" asp-route-id="@estate.EstateId">Details</a> |
+                    <a asp-action="Edit" asp-route-id="@estate.EstateId">Edit</a> |
+                    <a asp-action="Delete" asp-route-id="@estate.EstateId">Delete</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

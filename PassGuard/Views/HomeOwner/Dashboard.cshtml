@@ -1,0 +1,87 @@
+@model PassGuard.Models.ViewModels.HomeOwnerDashboardViewModel
+
+@{
+    ViewData["Title"] = "My Passes";
+}
+
+<h2>HomeOwner Dashboard</h2>
+
+<p>
+    Active Passes: @Model.ActivePassCount |
+    Past Passes: @Model.PastPassCount |
+    Revoked Passes: @Model.RevokedPassCount
+</p>
+
+<hr />
+
+<h4>Active Passes</h4>
+
+@if (Model.ActivePasses.Any())
+{
+    <table class="table table-bordered">
+        <thead>
+            <tr>
+                <th>Visitor</th>
+                <th>Home</th>
+                <th>Expires</th>
+                <th>Status</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var pass in Model.ActivePasses)
+            {
+                <tr>
+                    <td>@pass.Visitor.FullName</td>
+                    <td>@pass.Home.Address</td>
+                    <td>@pass.ExpiresAt</td>
+                    <td>@pass.Status</td>
+                    <td>
+                        <a asp-controller="VisitPass" asp-action="Details" asp-route-id="@pass.VisitPassId">Details</a>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+else
+{
+    <p>No active passes.</p>
+}
+
+<hr />
+
+<h4>Visit History</h4>
+
+@if (Model.VisitHistory.Any())
+{
+    <table class="table table-bordered">
+        <thead>
+            <tr>
+                <th>Visitor</th>
+                <th>Status</th>
+                <th>Created</th>
+                <th>Check-In Time</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var pass in Model.VisitHistory)
+            {
+                <tr>
+                    <td>@pass.Visitor.FullName</td>
+                    <td>@pass.Status</td>
+                    <td>@pass.CreatedAt</td>
+                    <td>@(pass.GateCheckIn?.CheckInTime.ToString() ?? "No check-in")</td>
+                    <td>
+                        <a asp-controller="VisitPass" asp-action="Details" asp-route-id="@pass.VisitPassId">Details</a>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+else
+{
+    <p>No visit history yet.</p>
+}

@@ -1,0 +1,21 @@
+@model PassGuard.Models.Estate
+
+@{
+    ViewData["Title"] = "Estate Details";
+}
+
+<h2>Estate Details</h2>
+
+<p><strong>Estate Name:</strong> @Model.EstateName</p>
+<p><strong>Total Homes:</strong> @Model.Homes.Count</p>
+
+@if (Model.Homes.Any())
+{
+    <h4>Homes</h4>
+    <ul>
+        @foreach (var home in Model.Homes)
+        {
+            <li>@home.Address</li>
+        }
+    </ul>
+}

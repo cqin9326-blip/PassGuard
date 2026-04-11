@@ -6,8 +6,12 @@
         public int TotalHomes { get; set; }
         public int TotalVisitors { get; set; }
         public int ActivePasses { get; set; }
+        public int UsedPasses { get; set; }
+        public int ExpiredPasses { get; set; }
+        public int RevokedPasses { get; set; }
         public int TodayCheckInCount { get; set; }
         public List<DashboardVisitorRowViewModel> TodayVisitors { get; set; } = new List<DashboardVisitorRowViewModel>();
+        public List<DashboardActivityViewModel> RecentActivity { get; set; } = new List<DashboardActivityViewModel>();
     }
 
     public class DashboardVisitorRowViewModel
@@ -19,5 +23,12 @@
         public DateTime ExpiresAt { get; set; }
         public string Status { get; set; } = "";
         public string Result { get; set; } = "";
+    }
+
+    public class DashboardActivityViewModel
+    {
+        public string Title { get; set; } = "";
+        public string Detail { get; set; } = "";
+        public DateTime Timestamp { get; set; }
     }
 }

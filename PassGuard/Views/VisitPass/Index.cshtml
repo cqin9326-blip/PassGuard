@@ -52,6 +52,13 @@
                     @if (User.IsInRole("Admin") || User.IsInRole("HomeOwner"))
                     {
                         <text> | </text><a asp-action="Edit" asp-route-id="@item.VisitPassId">Edit</a>
+                        @if (item.Status == PassGuard.Models.PassStatuses.Active)
+                        {
+                            <text> | </text>
+                            <form asp-action="Revoke" asp-route-id="@item.VisitPassId" method="post" class="d-inline">
+                                <button type="submit" class="btn btn-link btn-sm p-0 align-baseline">Revoke</button>
+                            </form>
+                        }
                         <text> | </text><a asp-action="Delete" asp-route-id="@item.VisitPassId">Delete</a>
                     }
                 </td>

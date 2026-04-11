@@ -22,6 +22,11 @@ namespace PassGuard.BLL
             return _repo.GetById(id);
         }
 
+        public List<Estate> GetAll()
+        {
+            return _repo.GetAll();
+        }
+
         public void Add(Estate estate)
         {
             _repo.Add(estate);
@@ -30,6 +35,11 @@ namespace PassGuard.BLL
         public void Update(Estate estate)
         {
             _repo.Update(estate);
+        }
+
+        public void Delete(int id)
+        {
+            _repo.Delete(id);
         }
     }
 }

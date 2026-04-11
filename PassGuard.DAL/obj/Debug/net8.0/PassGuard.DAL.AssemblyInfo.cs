@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("PassGuard.DAL")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+39a8b43832baaad4c812c933604457ace105295d")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+5bd884458751dfcb0eba6f07f1708dff00de0c34")]
 [assembly: System.Reflection.AssemblyProductAttribute("PassGuard.DAL")]
 [assembly: System.Reflection.AssemblyTitleAttribute("PassGuard.DAL")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

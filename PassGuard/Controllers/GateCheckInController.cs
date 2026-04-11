@@ -28,6 +28,19 @@ namespace PassGuard.Controllers
         [HttpPost]
         public IActionResult Create(int visitPassId, string result, DateTime checkInTime, string note, string securityUserId)
         {
+            VisitPass? visitPass = _visitPassService.GetFullDetails(visitPassId);
+
+            if (visitPass == null)
+            {
+                return NotFound();
+            }
+
+            if (string.Equals(result, "Approved", StringComparison.OrdinalIgnoreCase) && !_visitPassService.CanBeAccepted(visitPass))
+            {
+                TempData["ErrorMessage"] = $"This pass is {visitPass.Status} and cannot be approved.";
+                return RedirectToAction("Details", "VisitPass", new { id = visitPassId });
+            }
+
             GateCheckIn gateCheckIn = new GateCheckIn
             {
                 VisitPassId = visitPassId,
@@ -61,6 +74,19 @@ namespace PassGuard.Controllers
         [HttpPost]
         public IActionResult Edit(GateCheckIn model)
         {
+            VisitPass? visitPass = _visitPassService.GetFullDetails(model.VisitPassId);
+
+            if (visitPass == null)
+            {
+                return NotFound();
+            }
+
+            if (string.Equals(model.Result, "Approved", StringComparison.OrdinalIgnoreCase) && !_visitPassService.CanBeAccepted(visitPass))
+            {
+                TempData["ErrorMessage"] = $"This pass is {visitPass.Status} and cannot be approved.";
+                return RedirectToAction("Details", "VisitPass", new { id = model.VisitPassId });
+            }
+
             if (User.IsInRole("Security"))
             {
                 model.SecurityUserId = User.FindFirstValue(ClaimTypes.NameIdentifier) ?? model.SecurityUserId;

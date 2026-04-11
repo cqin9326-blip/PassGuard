@@ -62,22 +62,22 @@ namespace PassGuard.BLL
         {
             DateTime current = now ?? DateTime.Now;
 
-            if (string.Equals(visitPass.Status, "Revoked", StringComparison.OrdinalIgnoreCase))
+            if (string.Equals(visitPass.Status, PassStatuses.Revoked, StringComparison.OrdinalIgnoreCase))
             {
-                return "Revoked";
+                return PassStatuses.Revoked;
             }
 
             if (visitPass.GateCheckIn != null && string.Equals(visitPass.GateCheckIn.Result, "Approved", StringComparison.OrdinalIgnoreCase))
             {
-                return "Used";
+                return PassStatuses.Used;
             }
 
             if (visitPass.ExpiresAt <= current)
             {
-                return "Expired";
+                return PassStatuses.Expired;
             }
 
-            return "Active";
+            return PassStatuses.Active;
         }
     }
 }

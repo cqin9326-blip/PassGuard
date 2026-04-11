@@ -45,8 +45,8 @@
     <div class="mb-3">
         <label asp-for="Status" class="form-label">Status</label>
         <select asp-for="Status" class="form-control">
-            <option value="Active">Active</option>
-            <option value="Revoked">Revoked</option>
+            <option value="@PassGuard.Models.PassStatuses.Active">Active</option>
+            <option value="@PassGuard.Models.PassStatuses.Revoked">Revoked</option>
         </select>
     </div>
 

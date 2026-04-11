@@ -83,6 +83,11 @@ namespace PassGuard.BLL
 
         public string NormalizeStatus(VisitPass visitPass)
         {
+            if (!PassStatuses.Allowed.Contains(visitPass.Status))
+            {
+                visitPass.Status = PassStatuses.Active;
+            }
+
             string calculatedStatus = _passCodeService.CalculateStatus(visitPass);
 
             if (!string.Equals(visitPass.Status, calculatedStatus, StringComparison.Ordinal))
@@ -92,6 +97,26 @@ namespace PassGuard.BLL
             }
 
             return visitPass.Status;
+        }
+
+        public bool CanBeAccepted(VisitPass visitPass)
+        {
+            string status = NormalizeStatus(visitPass);
+            return string.Equals(status, PassStatuses.Active, StringComparison.Ordinal);
+        }
+
+        public void Revoke(VisitPass visitPass)
+        {
+            NormalizeStatus(visitPass);
+
+            if (string.Equals(visitPass.Status, PassStatuses.Used, StringComparison.Ordinal) ||
+                string.Equals(visitPass.Status, PassStatuses.Expired, StringComparison.Ordinal))
+            {
+                return;
+            }
+
+            visitPass.Status = PassStatuses.Revoked;
+            _repo.Update(visitPass);
         }
 
         private void NormalizeStatuses(IEnumerable<VisitPass> visitPasses)
