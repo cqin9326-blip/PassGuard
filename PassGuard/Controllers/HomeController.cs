@@ -1,6 +1,9 @@
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using PassGuard.BLL;
+using PassGuard.DAL;
 using PassGuard.Models;
 using PassGuard.Models.ViewModels;
 
@@ -13,20 +16,41 @@ namespace PassGuard.Controllers
         private readonly EstateService _estateService;
         private readonly VisitorService _visitorService;
         private readonly VisitPassService _visitPassService;
-        private readonly GateCheckInService _gateCheckInService;
+        private readonly UserManager<ApplicationUser> _userManager;
 
         public HomeController(
             HomeService homeService,
             EstateService estateService,
             VisitorService visitorService,
             VisitPassService visitPassService,
-            GateCheckInService gateCheckInService)
+            UserManager<ApplicationUser> userManager)
         {
             _homeService = homeService;
             _estateService = estateService;
             _visitorService = visitorService;
             _visitPassService = visitPassService;
-            _gateCheckInService = gateCheckInService;
+            _userManager = userManager;
+        }
+
+        private async Task PopulateHomeOwnerUsersAsync(string? selectedUserId = null)
+        {
+            List<ApplicationUser> users = _userManager.Users.OrderBy(u => u.Email).ToList();
+            List<SelectListItem> items = new List<SelectListItem>();
+
+            foreach (ApplicationUser user in users)
+            {
+                if (await _userManager.IsInRoleAsync(user, "HomeOwner"))
+                {
+                    items.Add(new SelectListItem
+                    {
+                        Value = user.Id,
+                        Text = $"{user.FullName} ({user.Email})",
+                        Selected = user.Id == selectedUserId
+                    });
+                }
+            }
+
+            ViewBag.HomeOwnerUsers = items;
         }
 
         public IActionResult Index()
@@ -35,16 +59,18 @@ namespace PassGuard.Controllers
             return View(homes);
         }
 
-        public IActionResult Create()
+        public async Task<IActionResult> Create()
         {
+            await PopulateHomeOwnerUsersAsync();
             return View();
         }
 
         [HttpPost]
-        public IActionResult Create(PropertyViewModel model)
+        public async Task<IActionResult> Create(PropertyViewModel model)
         {
             if (!ModelState.IsValid)
             {
+                await PopulateHomeOwnerUsersAsync(model.OwnerUserId);
                 return View(model);
             }
 
@@ -96,21 +122,10 @@ namespace PassGuard.Controllers
 
             _visitPassService.Add(visitPass);
 
-            GateCheckIn gateCheckIn = new GateCheckIn
-            {
-                VisitPassId = visitPass.VisitPassId,
-                Result = "Approved",
-                CheckInTime = now,
-                Note = "Auto Created",
-                SecurityUserId = "system"
-            };
-
-            _gateCheckInService.Add(gateCheckIn);
-
             return RedirectToAction("Index");
         }
 
-        public IActionResult Edit(int id)
+        public async Task<IActionResult> Edit(int id)
         {
             Home? home = _homeService.GetFullDetails(id);
 
@@ -131,14 +146,17 @@ namespace PassGuard.Controllers
                 VisitorPhone = visitPass?.Visitor.Phone ?? ""
             };
 
+            await PopulateHomeOwnerUsersAsync(model.OwnerUserId);
+
             return View(model);
         }
 
         [HttpPost]
-        public IActionResult Edit(PropertyViewModel model)
+        public async Task<IActionResult> Edit(PropertyViewModel model)
         {
             if (!ModelState.IsValid)
             {
+                await PopulateHomeOwnerUsersAsync(model.OwnerUserId);
                 return View(model);
             }
 

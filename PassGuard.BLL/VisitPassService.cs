@@ -33,6 +33,11 @@ namespace PassGuard.BLL
             return _repo.GetFirstByHomeId(homeId);
         }
 
+        public List<VisitPass> GetByCreatedByUserId(string createdByUserId)
+        {
+            return _repo.GetByCreatedByUserId(createdByUserId);
+        }
+
         public void Add(VisitPass visitPass)
         {
             _repo.Add(visitPass);

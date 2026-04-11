@@ -33,6 +33,11 @@ namespace PassGuard.BLL
             return _repo.GetByAddressAndEstateId(address, estateId);
         }
 
+        public Home? GetByOwnerUserId(string ownerUserId)
+        {
+            return _repo.GetByOwnerUserId(ownerUserId);
+        }
+
         public void Add(Home home)
         {
             _repo.Add(home);

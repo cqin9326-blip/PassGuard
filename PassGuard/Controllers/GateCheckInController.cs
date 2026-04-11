@@ -58,6 +58,11 @@ namespace PassGuard.Controllers
         [HttpPost]
         public IActionResult Edit(GateCheckIn model)
         {
+            if (User.IsInRole("Security"))
+            {
+                model.SecurityUserId = User.FindFirstValue(ClaimTypes.NameIdentifier) ?? model.SecurityUserId;
+            }
+
             _gateCheckInService.Update(model);
             return RedirectToAction("Details", "VisitPass", new { id = model.VisitPassId });
         }

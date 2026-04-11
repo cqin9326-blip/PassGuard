@@ -44,6 +44,17 @@ namespace PassGuard.DAL
             return _context.Homes.FirstOrDefault(h => h.Address == address && h.EstateId == estateId);
         }
 
+        public Home? GetByOwnerUserId(string ownerUserId)
+        {
+            return _context.Homes
+                .Include(h => h.Estate)
+                .Include(h => h.VisitPasses)
+                    .ThenInclude(v => v.Visitor)
+                .Include(h => h.VisitPasses)
+                    .ThenInclude(v => v.GateCheckIn)
+                .FirstOrDefault(h => h.OwnerUserId == ownerUserId);
+        }
+
         public void Add(Home home)
         {
             _context.Homes.Add(home);

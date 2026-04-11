@@ -15,17 +15,17 @@
 
     <div class="mb-3">
         <label asp-for="EstateName" class="form-label">Estate Name</label>
-        <input asp-for="EstateName" class="form-control" />
+        <input asp-for="EstateName" class="form-control" readonly="@(User.IsInRole("HomeOwner"))" />
     </div>
 
     <div class="mb-3">
         <label asp-for="OwnerUserId" class="form-label">Owner User Id</label>
-        <input asp-for="OwnerUserId" class="form-control" />
+        <input asp-for="OwnerUserId" class="form-control" readonly="@(User.IsInRole("HomeOwner"))" />
     </div>
 
     <div class="mb-3">
         <label asp-for="Address" class="form-label">Home Address</label>
-        <input asp-for="Address" class="form-control" />
+        <input asp-for="Address" class="form-control" readonly="@(User.IsInRole("HomeOwner"))" />
     </div>
 
     <hr />

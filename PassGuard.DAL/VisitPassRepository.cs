@@ -43,6 +43,18 @@ namespace PassGuard.DAL
             return _context.VisitPasses.FirstOrDefault(v => v.HomeId == homeId);
         }
 
+        public List<VisitPass> GetByCreatedByUserId(string createdByUserId)
+        {
+            return _context.VisitPasses
+                .Include(v => v.Visitor)
+                .Include(v => v.Home)
+                    .ThenInclude(h => h.Estate)
+                .Include(v => v.GateCheckIn)
+                .Where(v => v.CreatedByUserId == createdByUserId)
+                .OrderByDescending(v => v.CreatedAt)
+                .ToList();
+        }
+
         public void Add(VisitPass visitPass)
         {
             _context.VisitPasses.Add(visitPass);

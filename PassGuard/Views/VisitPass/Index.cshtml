@@ -6,6 +6,11 @@
 
 <h2>Access Information</h2>
 
+@if (TempData["ErrorMessage"] is string errorMessage)
+{
+    <div class="alert alert-warning">@errorMessage</div>
+}
+
 <p>
     <a asp-action="Create" class="btn btn-primary">Add</a>
 </p>

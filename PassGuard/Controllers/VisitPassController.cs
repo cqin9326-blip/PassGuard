@@ -34,14 +34,35 @@ namespace PassGuard.Controllers
 
         public IActionResult Index()
         {
-            var visitPasses = _visitPassService.GetAllWithDetails();
+            List<VisitPass> visitPasses = User.IsInRole("HomeOwner")
+                ? _visitPassService.GetByCreatedByUserId(CurrentUserId)
+                : _visitPassService.GetAllWithDetails();
+
             return View(visitPasses);
         }
 
         [Authorize(Roles = "Admin,HomeOwner")]
         public IActionResult Create()
         {
-            return View();
+            if (User.IsInRole("HomeOwner"))
+            {
+                Home? home = _homeService.GetByOwnerUserId(CurrentUserId);
+
+                if (home == null)
+                {
+                    TempData["ErrorMessage"] = "No home is assigned to your account yet. Please contact an admin.";
+                    return RedirectToAction(nameof(Index));
+                }
+
+                return View(new AccessViewModel
+                {
+                    EstateName = home.Estate.EstateName,
+                    OwnerUserId = home.OwnerUserId,
+                    Address = home.Address
+                });
+            }
+
+            return View(new AccessViewModel());
         }
 
         [HttpPost]
@@ -54,34 +75,52 @@ namespace PassGuard.Controllers
             }
 
             string ownerUserId = User.IsInRole("HomeOwner") ? CurrentUserId : model.OwnerUserId;
+            Home? home;
 
-            Estate? estate = _estateService.GetByName(model.EstateName);
-
-            if (estate == null)
+            if (User.IsInRole("HomeOwner"))
             {
-                estate = new Estate
-                {
-                    EstateName = model.EstateName
-                };
-                _estateService.Add(estate);
-            }
+                home = _homeService.GetByOwnerUserId(CurrentUserId);
 
-            Home? home = _homeService.GetByAddressAndEstateId(model.Address, estate.EstateId);
-
-            if (home == null)
-            {
-                home = new Home
+                if (home == null)
                 {
-                    OwnerUserId = ownerUserId,
-                    Address = model.Address,
-                    EstateId = estate.EstateId
-                };
-                _homeService.Add(home);
+                    ModelState.AddModelError(string.Empty, "No home is assigned to your account yet.");
+                    return View(model);
+                }
+
+                model.OwnerUserId = home.OwnerUserId;
+                model.Address = home.Address;
+                model.EstateName = home.Estate.EstateName;
             }
             else
             {
-                home.OwnerUserId = ownerUserId;
-                _homeService.Update(home);
+                Estate? estate = _estateService.GetByName(model.EstateName);
+
+                if (estate == null)
+                {
+                    estate = new Estate
+                    {
+                        EstateName = model.EstateName
+                    };
+                    _estateService.Add(estate);
+                }
+
+                home = _homeService.GetByAddressAndEstateId(model.Address, estate.EstateId);
+
+                if (home == null)
+                {
+                    home = new Home
+                    {
+                        OwnerUserId = ownerUserId,
+                        Address = model.Address,
+                        EstateId = estate.EstateId
+                    };
+                    _homeService.Add(home);
+                }
+                else
+                {
+                    home.OwnerUserId = ownerUserId;
+                    _homeService.Update(home);
+                }
             }
 
             Visitor? visitor = _visitorService.GetByFullNameAndPhone(model.VisitorFullName, model.VisitorPhone);
@@ -112,17 +151,6 @@ namespace PassGuard.Controllers
 
             _visitPassService.Add(visitPass);
 
-            GateCheckIn gateCheckIn = new GateCheckIn
-            {
-                VisitPassId = visitPass.VisitPassId,
-                Result = "Approved",
-                CheckInTime = now,
-                Note = "Auto Created",
-                SecurityUserId = User.IsInRole("Security") ? CurrentUserId : "system"
-            };
-
-            _gateCheckInService.Add(gateCheckIn);
-
             return RedirectToAction("Index");
         }
 
@@ -134,6 +162,11 @@ namespace PassGuard.Controllers
             if (visitPass == null)
             {
                 return NotFound();
+            }
+
+            if (User.IsInRole("HomeOwner") && visitPass.CreatedByUserId != CurrentUserId)
+            {
+                return Forbid();
             }
 
             GateCheckIn? latestCheckIn = visitPass.GateCheckIn;
@@ -184,15 +217,9 @@ namespace PassGuard.Controllers
                 return NotFound();
             }
 
-            Estate? estate = _estateService.GetByName(model.EstateName);
-
-            if (estate == null)
+            if (User.IsInRole("HomeOwner") && visitPass.CreatedByUserId != CurrentUserId)
             {
-                estate = new Estate
-                {
-                    EstateName = model.EstateName
-                };
-                _estateService.Add(estate);
+                return Forbid();
             }
 
             Home? home = _homeService.GetById(visitPass.HomeId);
@@ -202,10 +229,35 @@ namespace PassGuard.Controllers
                 return NotFound();
             }
 
-            home.OwnerUserId = ownerUserId;
-            home.Address = model.Address;
-            home.EstateId = estate.EstateId;
-            _homeService.Update(home);
+            if (User.IsInRole("HomeOwner"))
+            {
+                if (home.OwnerUserId != CurrentUserId)
+                {
+                    return Forbid();
+                }
+
+                model.OwnerUserId = home.OwnerUserId;
+                model.Address = home.Address;
+                model.EstateName = home.Estate?.EstateName ?? model.EstateName;
+            }
+            else
+            {
+                Estate? estate = _estateService.GetByName(model.EstateName);
+
+                if (estate == null)
+                {
+                    estate = new Estate
+                    {
+                        EstateName = model.EstateName
+                    };
+                    _estateService.Add(estate);
+                }
+
+                home.OwnerUserId = ownerUserId;
+                home.Address = model.Address;
+                home.EstateId = estate.EstateId;
+                _homeService.Update(home);
+            }
 
             Visitor? visitor = _visitorService.GetById(visitPass.VisitorId);
 
@@ -277,12 +329,29 @@ namespace PassGuard.Controllers
                 return NotFound();
             }
 
+            if (User.IsInRole("HomeOwner") && visitPass.CreatedByUserId != CurrentUserId)
+            {
+                return Forbid();
+            }
+
             return View(visitPass);
         }
 
         [Authorize(Roles = "Admin,HomeOwner")]
         public IActionResult Delete(int id)
         {
+            VisitPass? visitPass = _visitPassService.GetFullDetails(id);
+
+            if (visitPass == null)
+            {
+                return NotFound();
+            }
+
+            if (User.IsInRole("HomeOwner") && visitPass.CreatedByUserId != CurrentUserId)
+            {
+                return Forbid();
+            }
+
             _visitPassService.Delete(id);
             return RedirectToAction("Index");
         }

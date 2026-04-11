@@ -14,7 +14,9 @@
 
     <div class="mb-3">
         <label asp-for="OwnerUserId" class="form-label">Owner User Id</label>
-        <input asp-for="OwnerUserId" class="form-control" />
+        <select asp-for="OwnerUserId" asp-items="ViewBag.HomeOwnerUsers" class="form-control">
+            <option value="">Select homeowner</option>
+        </select>
     </div>
 
     <div class="mb-3">

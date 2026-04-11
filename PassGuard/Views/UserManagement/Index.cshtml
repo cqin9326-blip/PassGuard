@@ -1,0 +1,33 @@
+@model List<PassGuard.Models.ViewModels.UserListItemViewModel>
+
+@{
+    ViewData["Title"] = "Users";
+}
+
+<h2>User Management</h2>
+
+<table class="table table-bordered">
+    <thead>
+        <tr>
+            <th>Full Name</th>
+            <th>Email</th>
+            <th>Role</th>
+            <th>Assigned Home</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var user in Model)
+        {
+            <tr>
+                <td>@user.FullName</td>
+                <td>@user.Email</td>
+                <td>@user.RoleName</td>
+                <td>@(string.IsNullOrWhiteSpace(user.HomeAddress) ? "Not linked" : user.HomeAddress)</td>
+                <td>
+                    <a asp-action="EditRole" asp-route-id="@user.UserId">Edit Role</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
