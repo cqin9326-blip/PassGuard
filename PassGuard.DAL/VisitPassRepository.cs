@@ -1,0 +1,80 @@
+﻿using System.Collections.Generic;
+using System.Linq;
+using Microsoft.EntityFrameworkCore;
+using PassGuard.Models;
+
+namespace PassGuard.DAL
+{
+    public class VisitPassRepository
+    {
+        private readonly PassGuardContext _context;
+
+        public VisitPassRepository(PassGuardContext context)
+        {
+            _context = context;
+        }
+        public List<VisitPass> GetAllWithDetails()
+        {
+            return _context.VisitPasses
+                .Include(v => v.Home)
+                    .ThenInclude(h => h.Estate)
+                .Include(v => v.GateCheckIns)
+                .OrderByDescending(v => v.CreatedAt)
+                .ToList();
+        }
+        public VisitPass? GetFullDetails(int id)
+        {
+            return _context.VisitPasses
+                .Include(v => v.Home)
+                    .ThenInclude(h => h.Estate)
+                .Include(v => v.GateCheckIns)
+                .FirstOrDefault(v => v.VisitPassId == id);
+        }
+
+        public VisitPass? GetById(int id)
+        {
+            return _context.VisitPasses.FirstOrDefault(v => v.VisitPassId == id);
+        }
+
+        public VisitPass? GetFirstByHomeId(int homeId)
+        {
+            return _context.VisitPasses.FirstOrDefault(v => v.HomeId == homeId);
+        }
+
+        public void Add(VisitPass visitPass)
+        {
+            _context.VisitPasses.Add(visitPass);
+            _context.SaveChanges();
+        }
+
+        public void Update(VisitPass visitPass)
+        {
+            _context.VisitPasses.Update(visitPass);
+            _context.SaveChanges();
+        }
+
+        public void Delete(int id)
+        {
+            VisitPass? visitPass = _context.VisitPasses.FirstOrDefault(v => v.VisitPassId == id);
+
+            if (visitPass != null)
+            {
+                _context.VisitPasses.Remove(visitPass);
+                _context.SaveChanges();
+            }
+        }
+
+        public int CountDistinctVisitors()
+        {
+            return _context.VisitPasses
+                .Select(v => new { v.VisitorName, v.VisitorPhone })
+                .Distinct()
+                .Count();
+        }
+
+        public int CountActivePasses()
+        {
+            return _context.VisitPasses.Count(v => v.Status == "Active");
+        }
+    }
+}

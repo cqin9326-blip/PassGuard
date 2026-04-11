@@ -1,8 +1,39 @@
-﻿@{
-    ViewData["Title"] = "Home Page";
+﻿@model List<PassGuard.Models.Home>
+
+@{
+    ViewData["Title"] = "Property";
 }
 
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://learn.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
-</div>
+<h2>Property Information</h2>
+
+<p>
+    <a asp-action="Create" class="btn btn-primary">Add</a>
+</p>
+
+<table class="table table-bordered">
+    <thead>
+        <tr>
+            <th>Estate Name</th>
+            <th>House Owner</th>
+            <th>Home Address</th>
+            <th>Total Visits</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>@item.Estate.EstateName</td>
+                <td>@item.OwnerName</td>
+                <td>@item.Address</td>
+                <td>@item.VisitPasses.Count</td>
+                <td>
+                    <a asp-action="Edit" asp-route-id="@item.HomeId">Edit</a> |
+                    <a asp-action="Details" asp-route-id="@item.HomeId">Details</a> |
+                    <a asp-action="Delete" asp-route-id="@item.HomeId">Delete</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

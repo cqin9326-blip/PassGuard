@@ -1,0 +1,32 @@
+﻿@model PassGuard.Models.GateCheckIn
+
+@{
+    ViewData["Title"] = "Edit Check-In";
+}
+
+<h2>Edit Check-In</h2>
+
+<form asp-action="Edit" method="post">
+    <input asp-for="GateCheckInId" type="hidden" />
+    <input asp-for="VisitPassId" type="hidden" />
+
+    <div class="mb-3">
+        <label asp-for="Result" class="form-label">Result</label>
+        <select asp-for="Result" class="form-control">
+            <option value="Approved">Approved</option>
+            <option value="Denied">Denied</option>
+        </select>
+    </div>
+
+    <div class="mb-3">
+        <label asp-for="CheckInTime" class="form-label">Check-In Time</label>
+        <input asp-for="CheckInTime" type="datetime-local" class="form-control" />
+    </div>
+
+    <div class="mb-3">
+        <label asp-for="Note" class="form-label">Note</label>
+        <input asp-for="Note" class="form-control" />
+    </div>
+
+    <button type="submit" class="btn btn-warning">Update</button>
+</form>

@@ -1,0 +1,49 @@
+﻿@model PassGuard.Models.ViewModels.DashboardViewModel
+
+@{
+    ViewData["Title"] = "Dashboard";
+}
+
+<h2>DashBoard Part</h2>
+
+<h4>Key Performance Indicator</h4>
+
+<p>
+    Total Estates: @Model.TotalEstates |
+    Total Homes: @Model.TotalHomes |
+    Total Visitors: @Model.TotalVisitors |
+    Active Passes: @Model.ActivePasses |
+    Today Check-In Count: @Model.TodayCheckInCount
+</p>
+
+<hr />
+
+<h4>Today Visitors</h4>
+
+<table class="table table-bordered">
+    <thead>
+        <tr>
+            <th>Visitor</th>
+            <th>Home</th>
+            <th>Estate</th>
+            <th>Created At</th>
+            <th>Expires At</th>
+            <th>Status</th>
+            <th>Result</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model.TodayVisitors)
+        {
+            <tr>
+                <td>@item.VisitorName</td>
+                <td>@item.HomeAddress</td>
+                <td>@item.EstateName</td>
+                <td>@item.CreatedAt</td>
+                <td>@item.ExpiresAt</td>
+                <td>@item.Status</td>
+                <td>@item.Result</td>
+            </tr>
+        }
+    </tbody>
+</table>

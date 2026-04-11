@@ -1,0 +1,85 @@
+﻿@model PassGuard.Models.ViewModels.AccessViewModel
+
+@{
+    ViewData["Title"] = "Edit Access";
+}
+
+<h2>Edit Access</h2>
+
+<form asp-action="Edit" method="post">
+    <input asp-for="VisitPassId" type="hidden" />
+    <input asp-for="HomeId" type="hidden" />
+    <input asp-for="GateCheckInId" type="hidden" />
+
+    <div class="mb-3">
+        <label asp-for="EstateName" class="form-label">Estate Name</label>
+        <input asp-for="EstateName" class="form-control" />
+    </div>
+
+    <div class="mb-3">
+        <label asp-for="OwnerName" class="form-label">Owner Name</label>
+        <input asp-for="OwnerName" class="form-control" />
+    </div>
+
+    <div class="mb-3">
+        <label asp-for="Address" class="form-label">Home Address</label>
+        <input asp-for="Address" class="form-control" />
+    </div>
+
+    <hr />
+
+    <div class="mb-3">
+        <label asp-for="VisitorName" class="form-label">Visitor Name</label>
+        <input asp-for="VisitorName" class="form-control" />
+    </div>
+
+    <div class="mb-3">
+        <label asp-for="VisitorPhone" class="form-label">Visitor Phone</label>
+        <input asp-for="VisitorPhone" class="form-control" />
+    </div>
+
+    <hr />
+
+    <div class="mb-3">
+        <label asp-for="Status" class="form-label">Status</label>
+        <select asp-for="Status" class="form-control">
+            <option value="Active">Active</option>
+            <option value="Expired">Expired</option>
+            <option value="Revoked">Revoked</option>
+        </select>
+    </div>
+
+    <div class="mb-3">
+        <label asp-for="CreatedAt" class="form-label">Created At</label>
+        <input asp-for="CreatedAt" type="datetime-local" class="form-control" />
+    </div>
+
+    <div class="mb-3">
+        <label asp-for="ExpiresAt" class="form-label">Expires At</label>
+        <input asp-for="ExpiresAt" type="datetime-local" class="form-control" />
+    </div>
+
+    <hr />
+
+    <h4>Latest Check-In</h4>
+
+    <div class="mb-3">
+        <label asp-for="CheckInResult" class="form-label">Result</label>
+        <select asp-for="CheckInResult" class="form-control">
+            <option value="Approved">Approved</option>
+            <option value="Denied">Denied</option>
+        </select>
+    </div>
+
+    <div class="mb-3">
+        <label asp-for="CheckInTime" class="form-label">Check-In Time</label>
+        <input asp-for="CheckInTime" type="datetime-local" class="form-control" />
+    </div>
+
+    <div class="mb-3">
+        <label asp-for="CheckInNote" class="form-label">Note</label>
+        <input asp-for="CheckInNote" class="form-control" />
+    </div>
+
+    <button type="submit" class="btn btn-warning">Update</button>
+</form>

@@ -1,0 +1,19 @@
+﻿@model PassGuard.Models.GateCheckIn
+
+<h2>Edit Check-In</h2>
+
+<form asp-action="Edit">
+
+    <input type="hidden" asp-for="GateCheckInId" />
+
+    <label>Time</label>
+    <input asp-for="CheckInTime" type="datetime-local" />
+
+    <label>Result</label>
+    <input asp-for="Result" />
+
+    <label>Note</label>
+    <input asp-for="Note" />
+
+    <button type="submit">Update</button>
+</form>

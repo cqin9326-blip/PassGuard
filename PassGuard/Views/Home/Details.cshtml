@@ -1,0 +1,29 @@
+﻿@model PassGuard.Models.Home
+
+@{
+    ViewData["Title"] = "Property Details";
+}
+
+<h2>Property Details</h2>
+
+<p><strong>Estate Name:</strong> @Model.Estate.EstateName</p>
+<p><strong>Owner Name:</strong> @Model.OwnerName</p>
+<p><strong>Home Address:</strong> @Model.Address</p>
+
+<hr />
+
+<h4>Visitor Info</h4>
+
+@if (Model.VisitPasses.Count > 0)
+{
+    foreach (var item in Model.VisitPasses)
+    {
+        <p><strong>Visitor Name:</strong> @item.VisitorName</p>
+        <p><strong>Visitor Phone Number:</strong> @item.VisitorPhone</p>
+        <hr />
+    }
+}
+else
+{
+    <p>No visitor information found.</p>
+}

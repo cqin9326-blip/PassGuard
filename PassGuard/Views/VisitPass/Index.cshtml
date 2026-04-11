@@ -1,0 +1,45 @@
+﻿@model List<PassGuard.Models.VisitPass>
+
+@{
+    ViewData["Title"] = "Access";
+}
+
+<h2>Access Information</h2>
+
+<p>
+    <a asp-action="Create" class="btn btn-primary">Add</a>
+</p>
+
+<table class="table table-bordered">
+    <thead>
+        <tr>
+            <th>Visitor Name</th>
+            <th>Visitor Phone</th>
+            <th>Estate Name</th>
+            <th>Home Address</th>
+            <th>Total Visits</th>
+            <th>Visit Pass Status</th>
+            <th>CheckIn History</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>@item.VisitorName</td>
+                <td>@item.VisitorPhone</td>
+                <td>@item.Home.Estate.EstateName</td>
+                <td>@item.Home.Address</td>
+                <td>@item.Home.VisitPasses.Count</td>
+                <td>@item.Status</td>
+                <td>@item.GateCheckIns.Count</td>
+                <td>
+                    <a asp-action="Edit" asp-route-id="@item.VisitPassId">Edit</a> |
+                    <a asp-action="Details" asp-route-id="@item.VisitPassId">Details</a> |
+                    <a asp-action="Delete" asp-route-id="@item.VisitPassId">Delete</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

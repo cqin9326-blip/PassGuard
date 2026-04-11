@@ -1,0 +1,40 @@
+﻿@model PassGuard.Models.ViewModels.PropertyViewModel
+
+@{
+    ViewData["Title"] = "Add Property";
+}
+
+<h2>Add Property</h2>
+
+<form asp-action="Create" method="post">
+    <div class="mb-3">
+        <label asp-for="EstateName" class="form-label">Estate Name</label>
+        <input asp-for="EstateName" class="form-control" />
+    </div>
+
+    <div class="mb-3">
+        <label asp-for="OwnerName" class="form-label">Owner Name</label>
+        <input asp-for="OwnerName" class="form-control" />
+    </div>
+
+    <div class="mb-3">
+        <label asp-for="Address" class="form-label">Home Address</label>
+        <input asp-for="Address" class="form-control" />
+    </div>
+
+    <hr />
+
+    <h4>Visitor Info</h4>
+
+    <div class="mb-3">
+        <label asp-for="VisitorName" class="form-label">Visitor Name</label>
+        <input asp-for="VisitorName" class="form-control" />
+    </div>
+
+    <div class="mb-3">
+        <label asp-for="VisitorPhone" class="form-label">Visitor Phone</label>
+        <input asp-for="VisitorPhone" class="form-control" />
+    </div>
+
+    <button type="submit" class="btn btn-success">Save</button>
+</form>
