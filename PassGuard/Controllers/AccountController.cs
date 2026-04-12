@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using PassGuard.BLL;
 using PassGuard.DAL;
 using PassGuard.Models.ViewModels;
 
@@ -11,13 +12,16 @@ namespace PassGuard.Controllers
     {
         private readonly SignInManager<ApplicationUser> _signInManager;
         private readonly UserManager<ApplicationUser> _userManager;
+        private readonly AuditLogService _auditLogService;
 
         public AccountController(
             SignInManager<ApplicationUser> signInManager,
-            UserManager<ApplicationUser> userManager)
+            UserManager<ApplicationUser> userManager,
+            AuditLogService auditLogService)
         {
             _signInManager = signInManager;
             _userManager = userManager;
+            _auditLogService = auditLogService;
         }
 
         [HttpGet]
@@ -62,6 +66,14 @@ namespace PassGuard.Controllers
                 ModelState.AddModelError(string.Empty, "Invalid login attempt.");
                 return View(model);
             }
+
+            _auditLogService.Log(
+                "User Login",
+                "ApplicationUser",
+                user.Id,
+                user.Id,
+                user.Email ?? "",
+                $"Successful login for {user.Email}.");
 
             if (!string.IsNullOrWhiteSpace(returnUrl) && Url.IsLocalUrl(returnUrl))
             {

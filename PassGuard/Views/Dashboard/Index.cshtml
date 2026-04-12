@@ -24,6 +24,11 @@
         </div>
         <div class="stat-card">
             <span class="stat-label">Users</span>
+            <div class="stat-value">@Model.TotalUsers</div>
+            <div class="stat-note">Registered system accounts</div>
+        </div>
+        <div class="stat-card">
+            <span class="stat-label">Visitors</span>
             <div class="stat-value">@Model.TotalVisitors</div>
             <div class="stat-note">Unique visitor records in circulation</div>
         </div>
@@ -137,5 +142,37 @@
                 <p class="dashboard-empty">No recent events are available yet.</p>
             }
         </aside>
+
+        <section class="dashboard-panel">
+            <h3>Recent Audit Logs</h3>
+            @if (Model.RecentLogs.Any())
+            {
+                <table class="table estate-table">
+                    <thead>
+                        <tr>
+                            <th>Time</th>
+                            <th>Action</th>
+                            <th>User</th>
+                            <th>Detail</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var item in Model.RecentLogs)
+                        {
+                            <tr>
+                                <td>@item.Timestamp</td>
+                                <td>@item.ActionType</td>
+                                <td>@item.UserEmail</td>
+                                <td>@item.Detail</td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            }
+            else
+            {
+                <p class="dashboard-empty">No audit history has been recorded yet.</p>
+            }
+        </section>
     </div>
 </section>

@@ -44,6 +44,7 @@ namespace PassGuard
             builder.Services.AddScoped<VisitPassService>();
             builder.Services.AddScoped<PassCodeService>();
             builder.Services.AddScoped<GateCheckInService>();
+            builder.Services.AddScoped<AuditLogService>();
 
 
 
@@ -53,6 +54,7 @@ namespace PassGuard
             builder.Services.AddScoped<VisitorRepository>();
             builder.Services.AddScoped<VisitPassRepository>();
             builder.Services.AddScoped<GateCheckInRepository>();
+            builder.Services.AddScoped<AuditLogRepository>();
             builder.Services.AddScoped<DashboardService>();
 
             var app = builder.Build();

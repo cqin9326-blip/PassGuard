@@ -45,6 +45,10 @@
                                 <li class="nav-item">
                                     <a class="nav-link text-dark" asp-controller="Visitor" asp-action="Index">Visitors</a>
                                 </li>
+
+                                <li class="nav-item">
+                                    <a class="nav-link text-dark" asp-controller="AuditLog" asp-action="Index">Logs</a>
+                                </li>
                             }
 
                             @if (User.IsInRole("HomeOwner"))

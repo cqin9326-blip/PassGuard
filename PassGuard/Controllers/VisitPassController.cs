@@ -16,19 +16,22 @@ namespace PassGuard.Controllers
         private readonly EstateService _estateService;
         private readonly VisitorService _visitorService;
         private readonly GateCheckInService _gateCheckInService;
+        private readonly AuditLogService _auditLogService;
 
         public VisitPassController(
             VisitPassService visitPassService,
             HomeService homeService,
             EstateService estateService,
             VisitorService visitorService,
-            GateCheckInService gateCheckInService)
+            GateCheckInService gateCheckInService,
+            AuditLogService auditLogService)
         {
             _visitPassService = visitPassService;
             _homeService = homeService;
             _estateService = estateService;
             _visitorService = visitorService;
             _gateCheckInService = gateCheckInService;
+            _auditLogService = auditLogService;
         }
 
         private string CurrentUserId => User.FindFirstValue(ClaimTypes.NameIdentifier) ?? "";
@@ -164,6 +167,13 @@ namespace PassGuard.Controllers
             };
 
             _visitPassService.Add(visitPass);
+            _auditLogService.Log(
+                "Pass Created",
+                "VisitPass",
+                visitPass.VisitPassId.ToString(),
+                CurrentUserId,
+                User.Identity?.Name ?? "",
+                $"Created pass for visitor {visitor.FullName} at {home.Address}.");
 
             TempData["NewPassCode"] = plainCode;
             TempData["SuccessMessage"] = "Visit pass created successfully. Save the code now because it will not be shown again.";
@@ -412,6 +422,13 @@ namespace PassGuard.Controllers
                 model.Message = "Pass verified successfully. Visitor may enter.";
                 model.IsMatch = true;
                 model.VisitPass = _visitPassService.GetFullDetails(matchedPass.VisitPassId);
+                _auditLogService.Log(
+                    "Pass Verification",
+                    "VisitPass",
+                    matchedPass.VisitPassId.ToString(),
+                    CurrentUserId,
+                    User.Identity?.Name ?? "",
+                    $"Approved code verification for visitor {matchedPass.Visitor.FullName}.");
                 return View(model);
             }
 
@@ -432,6 +449,13 @@ namespace PassGuard.Controllers
             model.Message = $"Pass found, but it is {currentStatus} and cannot be used.";
             model.IsMatch = false;
             model.VisitPass = _visitPassService.GetFullDetails(matchedPass.VisitPassId);
+            _auditLogService.Log(
+                "Pass Verification",
+                "VisitPass",
+                matchedPass.VisitPassId.ToString(),
+                CurrentUserId,
+                User.Identity?.Name ?? "",
+                $"Denied code verification because pass status is {currentStatus}.");
             return View(model);
         }
 
@@ -453,6 +477,13 @@ namespace PassGuard.Controllers
             }
 
             _visitPassService.Revoke(visitPass);
+            _auditLogService.Log(
+                "Pass Revoked",
+                "VisitPass",
+                visitPass.VisitPassId.ToString(),
+                CurrentUserId,
+                User.Identity?.Name ?? "",
+                $"Revoked pass for visitor {visitPass.Visitor.FullName}.");
             return RedirectToAction(nameof(Details), new { id });
         }
 

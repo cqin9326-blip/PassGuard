@@ -11,11 +11,16 @@ namespace PassGuard.Controllers
     {
         private readonly GateCheckInService _gateCheckInService;
         private readonly VisitPassService _visitPassService;
+        private readonly AuditLogService _auditLogService;
 
-        public GateCheckInController(GateCheckInService gateCheckInService, VisitPassService visitPassService)
+        public GateCheckInController(
+            GateCheckInService gateCheckInService,
+            VisitPassService visitPassService,
+            AuditLogService auditLogService)
         {
             _gateCheckInService = gateCheckInService;
             _visitPassService = visitPassService;
+            _auditLogService = auditLogService;
         }
 
         public IActionResult Create(int visitPassId)
@@ -53,6 +58,13 @@ namespace PassGuard.Controllers
 
             _gateCheckInService.Add(gateCheckIn);
             UpdatePassStatus(visitPassId);
+            _auditLogService.Log(
+                "Check-In Result",
+                "GateCheckIn",
+                gateCheckIn.GateCheckInId.ToString(),
+                gateCheckIn.SecurityUserId,
+                User.Identity?.Name ?? "",
+                $"Recorded {gateCheckIn.Result} check-in for pass {visitPassId}.");
 
             return RedirectToAction("Details", "VisitPass", new { id = visitPassId });
         }
@@ -94,6 +106,13 @@ namespace PassGuard.Controllers
 
             _gateCheckInService.Update(model);
             UpdatePassStatus(model.VisitPassId);
+            _auditLogService.Log(
+                "Check-In Result",
+                "GateCheckIn",
+                model.GateCheckInId.ToString(),
+                model.SecurityUserId,
+                User.Identity?.Name ?? "",
+                $"Updated check-in to {model.Result} for pass {model.VisitPassId}.");
             return RedirectToAction("Details", "VisitPass", new { id = model.VisitPassId });
         }
 

@@ -10,17 +10,20 @@ namespace PassGuard.BLL
         private readonly HomeRepository _homeRepository;
         private readonly VisitPassRepository _visitPassRepository;
         private readonly GateCheckInRepository _gateCheckInRepository;
+        private readonly AuditLogRepository _auditLogRepository;
 
         public DashboardService(
             EstateRepository estateRepository,
             HomeRepository homeRepository,
             VisitPassRepository visitPassRepository,
-            GateCheckInRepository gateCheckInRepository)
+            GateCheckInRepository gateCheckInRepository,
+            AuditLogRepository auditLogRepository)
         {
             _estateRepository = estateRepository;
             _homeRepository = homeRepository;
             _visitPassRepository = visitPassRepository;
             _gateCheckInRepository = gateCheckInRepository;
+            _auditLogRepository = auditLogRepository;
         }
 
         public DashboardViewModel GetDashboard()
@@ -33,6 +36,10 @@ namespace PassGuard.BLL
             {
                 TotalEstates = _estateRepository.Count(),
                 TotalHomes = _homeRepository.Count(),
+                TotalUsers = _homeRepository.GetAllWithDetails()
+                    .Select(h => h.OwnerUserId)
+                    .Distinct()
+                    .Count(),
                 TotalVisitors = _visitPassRepository.CountDistinctVisitors(),
                 ActivePasses = visitPasses.Count(v => v.Status == PassStatuses.Active),
                 UsedPasses = visitPasses.Count(v => v.Status == PassStatuses.Used),
@@ -80,6 +87,17 @@ namespace PassGuard.BLL
                     })
                     .OrderByDescending(a => a.Timestamp)
                     .Take(10)
+                    .ToList(),
+                RecentLogs = _auditLogRepository.GetRecent(8)
+                    .Select(log => new AuditLogListItemViewModel
+                    {
+                        Timestamp = log.Timestamp,
+                        ActionType = log.ActionType,
+                        EntityType = log.EntityType,
+                        EntityId = log.EntityId,
+                        UserEmail = string.IsNullOrWhiteSpace(log.UserEmail) ? log.UserId : log.UserEmail,
+                        Detail = log.Detail
+                    })
                     .ToList()
             };
 

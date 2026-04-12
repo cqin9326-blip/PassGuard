@@ -16,6 +16,7 @@ namespace PassGuard.DAL
         public DbSet<Visitor> Visitors { get; set; }
         public DbSet<VisitPass> VisitPasses { get; set; }
         public DbSet<GateCheckIn> GateCheckIns { get; set; }
+        public DbSet<AuditLog> AuditLogs { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -117,6 +118,35 @@ namespace PassGuard.DAL
             modelBuilder.Entity<GateCheckIn>()
                 .HasIndex(g => g.VisitPassId)
                 .IsUnique();
+
+            modelBuilder.Entity<AuditLog>()
+                .HasKey(a => a.AuditLogId);
+
+            modelBuilder.Entity<AuditLog>()
+                .Property(a => a.ActionType)
+                .IsRequired()
+                .HasMaxLength(100);
+
+            modelBuilder.Entity<AuditLog>()
+                .Property(a => a.EntityType)
+                .IsRequired()
+                .HasMaxLength(100);
+
+            modelBuilder.Entity<AuditLog>()
+                .Property(a => a.EntityId)
+                .HasMaxLength(100);
+
+            modelBuilder.Entity<AuditLog>()
+                .Property(a => a.UserId)
+                .HasMaxLength(450);
+
+            modelBuilder.Entity<AuditLog>()
+                .Property(a => a.UserEmail)
+                .HasMaxLength(256);
+
+            modelBuilder.Entity<AuditLog>()
+                .Property(a => a.Detail)
+                .HasMaxLength(1000);
         }
     }
 }

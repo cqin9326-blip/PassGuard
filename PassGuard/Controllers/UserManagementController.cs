@@ -14,15 +14,18 @@ namespace PassGuard.Controllers
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly RoleManager<IdentityRole> _roleManager;
         private readonly HomeService _homeService;
+        private readonly AuditLogService _auditLogService;
 
         public UserManagementController(
             UserManager<ApplicationUser> userManager,
             RoleManager<IdentityRole> roleManager,
-            HomeService homeService)
+            HomeService homeService,
+            AuditLogService auditLogService)
         {
             _userManager = userManager;
             _roleManager = roleManager;
             _homeService = homeService;
+            _auditLogService = auditLogService;
         }
 
         public async Task<IActionResult> Index()
@@ -40,7 +43,8 @@ namespace PassGuard.Controllers
                     FullName = user.FullName,
                     Email = user.Email ?? "",
                     RoleName = roles.FirstOrDefault() ?? "Unassigned",
-                    HomeAddress = home?.Address
+                    HomeAddress = home?.Address,
+                    IsLocked = user.LockoutEnd.HasValue && user.LockoutEnd > DateTimeOffset.UtcNow
                 });
             }
 
@@ -106,6 +110,53 @@ namespace PassGuard.Controllers
                 ModelState.AddModelError(string.Empty, "Could not assign the selected role.");
                 model.AvailableRoles = _roleManager.Roles.Select(r => r.Name ?? "").Where(r => !string.IsNullOrWhiteSpace(r)).OrderBy(r => r).ToList();
                 return View(model);
+            }
+
+            _auditLogService.Log(
+                "Role Changed",
+                "ApplicationUser",
+                user.Id,
+                _userManager.GetUserId(User) ?? "",
+                User.Identity?.Name ?? "",
+                $"Changed role for {user.Email} to {model.RoleName}.");
+
+            return RedirectToAction(nameof(Index));
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> ToggleLock(string id)
+        {
+            ApplicationUser? user = await _userManager.FindByIdAsync(id);
+
+            if (user == null)
+            {
+                return NotFound();
+            }
+
+            bool isLocked = user.LockoutEnd.HasValue && user.LockoutEnd > DateTimeOffset.UtcNow;
+
+            if (isLocked)
+            {
+                await _userManager.SetLockoutEndDateAsync(user, DateTimeOffset.UtcNow);
+                _auditLogService.Log(
+                    "User Enabled",
+                    "ApplicationUser",
+                    user.Id,
+                    _userManager.GetUserId(User) ?? "",
+                    User.Identity?.Name ?? "",
+                    $"Unlocked user {user.Email}.");
+            }
+            else
+            {
+                await _userManager.SetLockoutEndDateAsync(user, DateTimeOffset.UtcNow.AddYears(100));
+                _auditLogService.Log(
+                    "User Disabled",
+                    "ApplicationUser",
+                    user.Id,
+                    _userManager.GetUserId(User) ?? "",
+                    User.Identity?.Name ?? "",
+                    $"Locked user {user.Email}.");
             }
 
             return RedirectToAction(nameof(Index));

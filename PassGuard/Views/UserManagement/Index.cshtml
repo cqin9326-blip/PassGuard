@@ -12,6 +12,7 @@
             <th>Full Name</th>
             <th>Email</th>
             <th>Role</th>
+            <th>Status</th>
             <th>Assigned Home</th>
             <th>Actions</th>
         </tr>
@@ -23,9 +24,15 @@
                 <td>@user.FullName</td>
                 <td>@user.Email</td>
                 <td>@user.RoleName</td>
+                <td>@(user.IsLocked ? "Disabled" : "Active")</td>
                 <td>@(string.IsNullOrWhiteSpace(user.HomeAddress) ? "Not linked" : user.HomeAddress)</td>
                 <td>
-                    <a asp-action="EditRole" asp-route-id="@user.UserId">Edit Role</a>
+                    <a asp-action="EditRole" asp-route-id="@user.UserId">Edit Role</a> |
+                    <form asp-action="ToggleLock" asp-route-id="@user.UserId" method="post" class="d-inline">
+                        <button type="submit" class="btn btn-link btn-sm p-0 align-baseline">
+                            @(user.IsLocked ? "Enable" : "Disable")
+                        </button>
+                    </form>
                 </td>
             </tr>
         }

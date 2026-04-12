@@ -7,5 +7,6 @@ namespace PassGuard.Models.ViewModels
         public string Email { get; set; } = "";
         public string RoleName { get; set; } = "";
         public string? HomeAddress { get; set; }
+        public bool IsLocked { get; set; }
     }
 }
