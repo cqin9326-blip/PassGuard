@@ -6,6 +6,11 @@
 
 <h2>Estate Management</h2>
 
+@if (TempData["ErrorMessage"] is string errorMessage)
+{
+    <div class="alert alert-warning">@errorMessage</div>
+}
+
 <p>
     <a asp-action="Create" class="btn btn-primary">Add Estate</a>
 </p>
@@ -27,7 +32,9 @@
                 <td>
                     <a asp-action="Details" asp-route-id="@estate.EstateId">Details</a> |
                     <a asp-action="Edit" asp-route-id="@estate.EstateId">Edit</a> |
-                    <a asp-action="Delete" asp-route-id="@estate.EstateId">Delete</a>
+                    <form asp-action="Delete" asp-route-id="@estate.EstateId" method="post" class="d-inline">
+                        <button type="submit" class="btn btn-link btn-sm p-0 align-baseline">Delete</button>
+                    </form>
                 </td>
             </tr>
         }

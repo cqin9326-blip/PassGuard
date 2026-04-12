@@ -16,7 +16,8 @@ namespace PassGuard.DAL
 
         public Estate? GetByName(string name)
         {
-            return _context.Estates.FirstOrDefault(e => e.EstateName == name);
+            string normalizedName = name.Trim();
+            return _context.Estates.FirstOrDefault(e => e.EstateName == normalizedName);
         }
 
         public Estate? GetById(int id)
@@ -60,6 +61,15 @@ namespace PassGuard.DAL
         public int Count()
         {
             return _context.Estates.Count();
+        }
+
+        public bool ExistsByName(string name, int? ignoreEstateId = null)
+        {
+            string normalizedName = name.Trim();
+
+            return _context.Estates.Any(e =>
+                e.EstateName == normalizedName &&
+                (!ignoreEstateId.HasValue || e.EstateId != ignoreEstateId.Value));
         }
     }
 }

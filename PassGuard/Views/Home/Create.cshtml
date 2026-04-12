@@ -1,39 +1,49 @@
 ﻿@model PassGuard.Models.ViewModels.PropertyViewModel
 
 @{
-    ViewData["Title"] = "Add Property";
+    ViewData["Title"] = "Add Home";
 }
 
-<h2>Add Property</h2>
+<h2>Add Home</h2>
 
 <form asp-action="Create" method="post">
+    <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+
     <div class="mb-3">
-        <label asp-for="EstateName" class="form-label">Estate Name</label>
+        <label asp-for="EstateName" class="form-label"></label>
         <input asp-for="EstateName" class="form-control" />
+        <span asp-validation-for="EstateName" class="text-danger"></span>
     </div>
 
     <div class="mb-3">
-        <label asp-for="OwnerUserId" class="form-label">Owner User Id</label>
+        <label asp-for="OwnerUserId" class="form-label"></label>
         <select asp-for="OwnerUserId" asp-items="ViewBag.HomeOwnerUsers" class="form-control">
             <option value="">Select homeowner</option>
         </select>
+        <span asp-validation-for="OwnerUserId" class="text-danger"></span>
     </div>
 
     <div class="mb-3">
-        <label asp-for="Address" class="form-label">Home Address</label>
+        <label asp-for="Address" class="form-label"></label>
         <input asp-for="Address" class="form-control" />
+        <span asp-validation-for="Address" class="text-danger"></span>
     </div>
 
     <hr />
 
-    <h4>Visitor Info</h4>
+    <h4>Default Visitor</h4>
 
     <div class="mb-3">
-        <label asp-for="VisitorId" class="form-label">Visitor</label>
+        <label asp-for="VisitorId" class="form-label"></label>
         <select asp-for="VisitorId" asp-items="ViewBag.Visitors" class="form-control">
             <option value="">Select visitor</option>
         </select>
+        <span asp-validation-for="VisitorId" class="text-danger"></span>
     </div>
 
     <button type="submit" class="btn btn-success">Save</button>
 </form>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

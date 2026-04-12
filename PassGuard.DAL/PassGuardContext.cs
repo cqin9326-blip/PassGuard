@@ -30,6 +30,10 @@ namespace PassGuard.DAL
                 .IsRequired()
                 .HasMaxLength(100);
 
+            modelBuilder.Entity<Estate>()
+                .HasIndex(e => e.EstateName)
+                .IsUnique();
+
             modelBuilder.Entity<Home>()
                 .HasKey(h => h.HomeId);
 
@@ -42,6 +46,14 @@ namespace PassGuard.DAL
                 .Property(h => h.Address)
                 .IsRequired()
                 .HasMaxLength(200);
+
+            modelBuilder.Entity<Home>()
+                .HasIndex(h => h.OwnerUserId)
+                .IsUnique();
+
+            modelBuilder.Entity<Home>()
+                .HasIndex(h => new { h.EstateId, h.Address })
+                .IsUnique();
 
             modelBuilder.Entity<Home>()
                 .HasOne(h => h.Estate)
@@ -62,6 +74,10 @@ namespace PassGuard.DAL
                 .IsRequired()
                 .HasMaxLength(30);
 
+            modelBuilder.Entity<Visitor>()
+                .HasIndex(v => new { v.FullName, v.Phone })
+                .IsUnique();
+
             modelBuilder.Entity<VisitPass>()
                 .HasKey(v => v.VisitPassId);
 
@@ -79,6 +95,10 @@ namespace PassGuard.DAL
                 .Property(v => v.Status)
                 .IsRequired()
                 .HasMaxLength(30);
+
+            modelBuilder.Entity<VisitPass>()
+                .HasIndex(v => v.CodeHash)
+                .IsUnique();
 
             modelBuilder.Entity<VisitPass>()
                 .HasOne(v => v.Visitor)

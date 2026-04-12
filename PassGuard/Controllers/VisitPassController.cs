@@ -1,8 +1,10 @@
 ﻿using System.Security.Claims;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using PassGuard.BLL;
+using PassGuard.DAL;
 using PassGuard.Models;
 using PassGuard.Models.ViewModels;
 
@@ -17,6 +19,7 @@ namespace PassGuard.Controllers
         private readonly VisitorService _visitorService;
         private readonly GateCheckInService _gateCheckInService;
         private readonly AuditLogService _auditLogService;
+        private readonly UserManager<ApplicationUser> _userManager;
 
         public VisitPassController(
             VisitPassService visitPassService,
@@ -24,7 +27,8 @@ namespace PassGuard.Controllers
             EstateService estateService,
             VisitorService visitorService,
             GateCheckInService gateCheckInService,
-            AuditLogService auditLogService)
+            AuditLogService auditLogService,
+            UserManager<ApplicationUser> userManager)
         {
             _visitPassService = visitPassService;
             _homeService = homeService;
@@ -32,6 +36,7 @@ namespace PassGuard.Controllers
             _visitorService = visitorService;
             _gateCheckInService = gateCheckInService;
             _auditLogService = auditLogService;
+            _userManager = userManager;
         }
 
         private string CurrentUserId => User.FindFirstValue(ClaimTypes.NameIdentifier) ?? "";
@@ -48,6 +53,33 @@ namespace PassGuard.Controllers
                 .ToList();
         }
 
+        private async Task PopulateHomeOwnerUsersAsync(string? selectedUserId = null)
+        {
+            List<ApplicationUser> users = _userManager.Users.OrderBy(u => u.Email).ToList();
+            List<SelectListItem> items = new List<SelectListItem>();
+
+            foreach (ApplicationUser user in users)
+            {
+                if (await _userManager.IsInRoleAsync(user, "HomeOwner"))
+                {
+                    items.Add(new SelectListItem
+                    {
+                        Value = user.Id,
+                        Text = $"{user.FullName} ({user.Email})",
+                        Selected = user.Id == selectedUserId
+                    });
+                }
+            }
+
+            ViewBag.HomeOwnerUsers = items;
+        }
+
+        private async Task<bool> IsValidHomeOwnerUserAsync(string ownerUserId)
+        {
+            ApplicationUser? user = await _userManager.FindByIdAsync(ownerUserId);
+            return user != null && await _userManager.IsInRoleAsync(user, "HomeOwner");
+        }
+
         public IActionResult Index()
         {
             List<VisitPass> visitPasses = User.IsInRole("HomeOwner")
@@ -58,7 +90,7 @@ namespace PassGuard.Controllers
         }
 
         [Authorize(Roles = "Admin,HomeOwner")]
-        public IActionResult Create()
+        public async Task<IActionResult> Create()
         {
             if (User.IsInRole("HomeOwner"))
             {
@@ -79,20 +111,25 @@ namespace PassGuard.Controllers
                 });
             }
 
+            await PopulateHomeOwnerUsersAsync();
             PopulateVisitors();
             return View(new AccessViewModel());
         }
 
         [HttpPost]
         [Authorize(Roles = "Admin,HomeOwner")]
-        public IActionResult Create(AccessViewModel model)
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Create(AccessViewModel model)
         {
             if (!ModelState.IsValid)
             {
+                await PopulateHomeOwnerUsersAsync(model.OwnerUserId);
                 PopulateVisitors(model.VisitorId);
                 return View(model);
             }
 
+            model.EstateName = model.EstateName.Trim();
+            model.Address = model.Address.Trim();
             string ownerUserId = User.IsInRole("HomeOwner") ? CurrentUserId : model.OwnerUserId;
             Home? home;
 
@@ -103,6 +140,8 @@ namespace PassGuard.Controllers
                 if (home == null)
                 {
                     ModelState.AddModelError(string.Empty, "No home is assigned to your account yet.");
+                    await PopulateHomeOwnerUsersAsync(model.OwnerUserId);
+                    PopulateVisitors(model.VisitorId);
                     return View(model);
                 }
 
@@ -112,6 +151,14 @@ namespace PassGuard.Controllers
             }
             else
             {
+                if (!await IsValidHomeOwnerUserAsync(ownerUserId))
+                {
+                    ModelState.AddModelError(nameof(model.OwnerUserId), "Select a valid homeowner account.");
+                    await PopulateHomeOwnerUsersAsync(model.OwnerUserId);
+                    PopulateVisitors(model.VisitorId);
+                    return View(model);
+                }
+
                 Estate? estate = _estateService.GetByName(model.EstateName);
 
                 if (estate == null)
@@ -121,6 +168,36 @@ namespace PassGuard.Controllers
                         EstateName = model.EstateName
                     };
                     _estateService.Add(estate);
+                }
+
+                home = _homeService.GetByAddressAndEstateId(model.Address, estate.EstateId);
+
+                if (_homeService.ExistsByOwnerUserId(ownerUserId, home?.HomeId))
+                {
+                    ModelState.AddModelError(nameof(model.OwnerUserId), "This homeowner is already assigned to another home.");
+                    await PopulateHomeOwnerUsersAsync(model.OwnerUserId);
+                    PopulateVisitors(model.VisitorId);
+                    return View(model);
+                }
+
+            }
+
+            Visitor? visitor = _visitorService.GetById(model.VisitorId);
+
+            if (visitor == null)
+            {
+                ModelState.AddModelError(nameof(model.VisitorId), "Select a valid visitor.");
+                PopulateVisitors();
+                return View(model);
+            }
+
+            if (!User.IsInRole("HomeOwner"))
+            {
+                Estate? estate = _estateService.GetByName(model.EstateName);
+
+                if (estate == null)
+                {
+                    return View(model);
                 }
 
                 home = _homeService.GetByAddressAndEstateId(model.Address, estate.EstateId);
@@ -135,19 +212,28 @@ namespace PassGuard.Controllers
                     };
                     _homeService.Add(home);
                 }
-                else
+                else if (home.OwnerUserId != ownerUserId)
                 {
                     home.OwnerUserId = ownerUserId;
                     _homeService.Update(home);
                 }
             }
 
-            Visitor? visitor = _visitorService.GetById(model.VisitorId);
-
-            if (visitor == null)
+            if (home == null)
             {
-                ModelState.AddModelError(nameof(model.VisitorId), "Select a valid visitor.");
-                PopulateVisitors();
+                ModelState.AddModelError(string.Empty, "The selected home could not be found.");
+                await PopulateHomeOwnerUsersAsync(model.OwnerUserId);
+                PopulateVisitors(model.VisitorId);
+                return View(model);
+            }
+
+            int homeId = home.HomeId;
+
+            if (_visitPassService.HasActivePassForVisitorAndHome(visitor.VisitorId, homeId))
+            {
+                ModelState.AddModelError(nameof(model.VisitorId), "This visitor already has an active visit pass for the selected home.");
+                await PopulateHomeOwnerUsersAsync(model.OwnerUserId);
+                PopulateVisitors(model.VisitorId);
                 return View(model);
             }
 
@@ -160,7 +246,7 @@ namespace PassGuard.Controllers
                 VisitorId = visitor.VisitorId,
                 CodeHash = _visitPassService.HashCode(plainCode),
                 CreatedByUserId = CurrentUserId,
-                HomeId = home.HomeId,
+                HomeId = homeId,
                 CreatedAt = now,
                 ExpiresAt = expire,
                 Status = PassStatuses.Active
@@ -182,7 +268,7 @@ namespace PassGuard.Controllers
         }
 
         [Authorize(Roles = "Admin,HomeOwner")]
-        public IActionResult Edit(int id)
+        public async Task<IActionResult> Edit(int id)
         {
             VisitPass? visitPass = _visitPassService.GetFullDetails(id);
 
@@ -195,6 +281,8 @@ namespace PassGuard.Controllers
             {
                 return Forbid();
             }
+
+            await PopulateHomeOwnerUsersAsync(visitPass.Home.OwnerUserId);
 
             GateCheckIn? latestCheckIn = visitPass.GateCheckIn;
 
@@ -228,14 +316,18 @@ namespace PassGuard.Controllers
 
         [HttpPost]
         [Authorize(Roles = "Admin,HomeOwner")]
-        public IActionResult Edit(AccessViewModel model)
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Edit(AccessViewModel model)
         {
             if (!ModelState.IsValid)
             {
+                await PopulateHomeOwnerUsersAsync(model.OwnerUserId);
                 PopulateVisitors(model.VisitorId);
                 return View(model);
             }
 
+            model.EstateName = model.EstateName.Trim();
+            model.Address = model.Address.Trim();
             string ownerUserId = User.IsInRole("HomeOwner") ? CurrentUserId : model.OwnerUserId;
 
             VisitPass? visitPass = _visitPassService.GetFullDetails(model.VisitPassId);
@@ -250,7 +342,7 @@ namespace PassGuard.Controllers
                 return Forbid();
             }
 
-            Home? home = _homeService.GetById(visitPass.HomeId);
+            Home? home = _homeService.GetFullDetails(visitPass.HomeId);
 
             if (home == null)
             {
@@ -270,6 +362,14 @@ namespace PassGuard.Controllers
             }
             else
             {
+                if (!await IsValidHomeOwnerUserAsync(ownerUserId))
+                {
+                    ModelState.AddModelError(nameof(model.OwnerUserId), "Select a valid homeowner account.");
+                    await PopulateHomeOwnerUsersAsync(model.OwnerUserId);
+                    PopulateVisitors(model.VisitorId);
+                    return View(model);
+                }
+
                 Estate? estate = _estateService.GetByName(model.EstateName);
 
                 if (estate == null)
@@ -281,10 +381,25 @@ namespace PassGuard.Controllers
                     _estateService.Add(estate);
                 }
 
+                if (_homeService.ExistsByAddressAndEstateId(model.Address, estate.EstateId, home.HomeId))
+                {
+                    ModelState.AddModelError(nameof(model.Address), "A different home already uses this address in the selected estate.");
+                    await PopulateHomeOwnerUsersAsync(model.OwnerUserId);
+                    PopulateVisitors(model.VisitorId);
+                    return View(model);
+                }
+
+                if (_homeService.ExistsByOwnerUserId(ownerUserId, home.HomeId))
+                {
+                    ModelState.AddModelError(nameof(model.OwnerUserId), "This homeowner is already assigned to another home.");
+                    await PopulateHomeOwnerUsersAsync(model.OwnerUserId);
+                    PopulateVisitors(model.VisitorId);
+                    return View(model);
+                }
+
                 home.OwnerUserId = ownerUserId;
                 home.Address = model.Address;
                 home.EstateId = estate.EstateId;
-                _homeService.Update(home);
             }
 
             Visitor? visitor = _visitorService.GetById(model.VisitorId);
@@ -296,49 +411,52 @@ namespace PassGuard.Controllers
                 return View(model);
             }
 
+            if (_visitPassService.HasActivePassForVisitorAndHome(visitor.VisitorId, visitPass.HomeId, visitPass.VisitPassId))
+            {
+                ModelState.AddModelError(nameof(model.VisitorId), "This visitor already has another active visit pass for the selected home.");
+                await PopulateHomeOwnerUsersAsync(model.OwnerUserId);
+                PopulateVisitors(model.VisitorId);
+                return View(model);
+            }
+
             visitPass.VisitorId = visitor.VisitorId;
             visitPass.CodeHash = model.CodeHash;
             visitPass.CreatedByUserId = string.IsNullOrWhiteSpace(CurrentUserId) ? model.CreatedByUserId : CurrentUserId;
+            if (!string.Equals(model.Status, PassStatuses.Active, StringComparison.Ordinal) &&
+                !string.Equals(model.Status, PassStatuses.Revoked, StringComparison.Ordinal))
+            {
+                ModelState.AddModelError(nameof(model.Status), "Only Active or Revoked statuses can be set manually.");
+                await PopulateHomeOwnerUsersAsync(model.OwnerUserId);
+                PopulateVisitors(model.VisitorId);
+                return View(model);
+            }
+
             if (string.Equals(model.Status, PassStatuses.Revoked, StringComparison.Ordinal))
             {
                 _visitPassService.Revoke(visitPass);
             }
+            else
+            {
+                visitPass.Status = PassStatuses.Active;
+            }
             visitPass.CreatedAt = model.CreatedAt;
             visitPass.ExpiresAt = model.ExpiresAt;
+
+            if (visitPass.ExpiresAt <= visitPass.CreatedAt)
+            {
+                ModelState.AddModelError(nameof(model.ExpiresAt), "Expiry must be later than the pass creation time.");
+                await PopulateHomeOwnerUsersAsync(model.OwnerUserId);
+                PopulateVisitors(model.VisitorId);
+                return View(model);
+            }
+
+            if (!User.IsInRole("HomeOwner"))
+            {
+                _homeService.Update(home);
+            }
+
             _visitPassService.Update(visitPass);
             _visitPassService.NormalizeStatus(visitPass);
-
-            GateCheckIn? gateCheckIn;
-
-            if (model.GateCheckInId.HasValue)
-            {
-                gateCheckIn = _gateCheckInService.GetById(model.GateCheckInId.Value);
-            }
-            else
-            {
-                gateCheckIn = null;
-            }
-
-            if (gateCheckIn == null)
-            {
-                gateCheckIn = new GateCheckIn
-                {
-                    VisitPassId = visitPass.VisitPassId,
-                    Result = model.CheckInResult,
-                    CheckInTime = model.CheckInTime ?? DateTime.Now,
-                    Note = model.CheckInNote,
-                    SecurityUserId = User.IsInRole("Security") ? CurrentUserId : model.SecurityUserId
-                };
-                _gateCheckInService.Add(gateCheckIn);
-            }
-            else
-            {
-                gateCheckIn.Result = model.CheckInResult;
-                gateCheckIn.CheckInTime = model.CheckInTime ?? DateTime.Now;
-                gateCheckIn.Note = model.CheckInNote;
-                gateCheckIn.SecurityUserId = User.IsInRole("Security") ? CurrentUserId : model.SecurityUserId;
-                _gateCheckInService.Update(gateCheckIn);
-            }
 
             return RedirectToAction("Index");
         }
@@ -487,7 +605,9 @@ namespace PassGuard.Controllers
             return RedirectToAction(nameof(Details), new { id });
         }
 
+        [HttpPost]
         [Authorize(Roles = "Admin,HomeOwner")]
+        [ValidateAntiForgeryToken]
         public IActionResult Delete(int id)
         {
             VisitPass? visitPass = _visitPassService.GetFullDetails(id);

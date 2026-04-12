@@ -65,6 +65,12 @@ namespace PassGuard.Controllers
                 .ToList();
         }
 
+        private async Task<bool> IsValidHomeOwnerUserAsync(string ownerUserId)
+        {
+            ApplicationUser? user = await _userManager.FindByIdAsync(ownerUserId);
+            return user != null && await _userManager.IsInRoleAsync(user, "HomeOwner");
+        }
+
         public IActionResult Index()
         {
             var homes = _homeService.GetAllWithDetails();
@@ -79,6 +85,7 @@ namespace PassGuard.Controllers
         }
 
         [HttpPost]
+        [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(PropertyViewModel model)
         {
             if (!ModelState.IsValid)
@@ -87,8 +94,48 @@ namespace PassGuard.Controllers
                 PopulateVisitors(model.VisitorId);
                 return View(model);
             }
+            model.EstateName = model.EstateName.Trim();
+            model.Address = model.Address.Trim();
+
+            if (!await IsValidHomeOwnerUserAsync(model.OwnerUserId))
+            {
+                ModelState.AddModelError(nameof(model.OwnerUserId), "Select a valid homeowner account.");
+            }
+
+            if (!model.VisitorId.HasValue)
+            {
+                ModelState.AddModelError(nameof(model.VisitorId), "Select a visitor.");
+            }
 
             Estate? estate = _estateService.GetByName(model.EstateName);
+
+            if (estate != null && _homeService.ExistsByAddressAndEstateId(model.Address, estate.EstateId))
+            {
+                ModelState.AddModelError(nameof(model.Address), "A home with this address already exists in the selected estate.");
+            }
+
+            if (_homeService.ExistsByOwnerUserId(model.OwnerUserId))
+            {
+                ModelState.AddModelError(nameof(model.OwnerUserId), "This homeowner is already assigned to another home.");
+            }
+
+            if (!ModelState.IsValid)
+            {
+                await PopulateHomeOwnerUsersAsync(model.OwnerUserId);
+                PopulateVisitors(model.VisitorId);
+                return View(model);
+            }
+
+            int visitorId = model.VisitorId ?? 0;
+            Visitor? visitor = _visitorService.GetById(visitorId);
+
+            if (visitor == null)
+            {
+                ModelState.AddModelError(nameof(model.VisitorId), "Selected visitor was not found.");
+                await PopulateHomeOwnerUsersAsync(model.OwnerUserId);
+                PopulateVisitors();
+                return View(model);
+            }
 
             if (estate == null)
             {
@@ -107,24 +154,6 @@ namespace PassGuard.Controllers
             };
 
             _homeService.Add(home);
-
-            if (!model.VisitorId.HasValue)
-            {
-                ModelState.AddModelError(nameof(model.VisitorId), "Select a visitor.");
-                await PopulateHomeOwnerUsersAsync(model.OwnerUserId);
-                PopulateVisitors();
-                return View(model);
-            }
-
-            Visitor? visitor = _visitorService.GetById(model.VisitorId.Value);
-
-            if (visitor == null)
-            {
-                ModelState.AddModelError(nameof(model.VisitorId), "Selected visitor was not found.");
-                await PopulateHomeOwnerUsersAsync(model.OwnerUserId);
-                PopulateVisitors();
-                return View(model);
-            }
 
             DateTime now = DateTime.Now;
             DateTime expire = now.AddDays(1);
@@ -172,6 +201,7 @@ namespace PassGuard.Controllers
         }
 
         [HttpPost]
+        [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(PropertyViewModel model)
         {
             if (!ModelState.IsValid)
@@ -180,8 +210,39 @@ namespace PassGuard.Controllers
                 PopulateVisitors(model.VisitorId);
                 return View(model);
             }
+            model.EstateName = model.EstateName.Trim();
+            model.Address = model.Address.Trim();
+
+            Home? home = _homeService.GetById(model.HomeId);
+
+            if (home == null)
+            {
+                return NotFound();
+            }
+
+            if (!await IsValidHomeOwnerUserAsync(model.OwnerUserId))
+            {
+                ModelState.AddModelError(nameof(model.OwnerUserId), "Select a valid homeowner account.");
+            }
+
+            if (_homeService.ExistsByOwnerUserId(model.OwnerUserId, model.HomeId))
+            {
+                ModelState.AddModelError(nameof(model.OwnerUserId), "This homeowner is already assigned to another home.");
+            }
 
             Estate? estate = _estateService.GetByName(model.EstateName);
+
+            if (estate != null && _homeService.ExistsByAddressAndEstateId(model.Address, estate.EstateId, model.HomeId))
+            {
+                ModelState.AddModelError(nameof(model.Address), "A home with this address already exists in the selected estate.");
+            }
+
+            if (!ModelState.IsValid)
+            {
+                await PopulateHomeOwnerUsersAsync(model.OwnerUserId);
+                PopulateVisitors(model.VisitorId);
+                return View(model);
+            }
 
             if (estate == null)
             {
@@ -191,19 +252,6 @@ namespace PassGuard.Controllers
                 };
                 _estateService.Add(estate);
             }
-
-            Home? home = _homeService.GetById(model.HomeId);
-
-            if (home == null)
-            {
-                return NotFound();
-            }
-
-            home.OwnerUserId = model.OwnerUserId;
-            home.Address = model.Address;
-            home.EstateId = estate.EstateId;
-
-            _homeService.Update(home);
 
             VisitPass? visitPass = _visitPassService.GetFirstByHomeId(model.HomeId);
 
@@ -229,6 +277,16 @@ namespace PassGuard.Controllers
 
                 visitPass.VisitorId = visitor.VisitorId;
                 visitPass.CreatedByUserId = model.OwnerUserId;
+            }
+
+            home.OwnerUserId = model.OwnerUserId;
+            home.Address = model.Address;
+            home.EstateId = estate.EstateId;
+
+            _homeService.Update(home);
+
+            if (visitPass != null)
+            {
                 _visitPassService.Update(visitPass);
             }
 
@@ -247,8 +305,23 @@ namespace PassGuard.Controllers
             return View(home);
         }
 
+        [HttpPost]
+        [ValidateAntiForgeryToken]
         public IActionResult Delete(int id)
         {
+            Home? home = _homeService.GetFullDetails(id);
+
+            if (home == null)
+            {
+                return NotFound();
+            }
+
+            if (home.VisitPasses.Any())
+            {
+                TempData["ErrorMessage"] = "You cannot delete a home that already has visit pass history.";
+                return RedirectToAction(nameof(Index));
+            }
+
             _homeService.Delete(id);
             return RedirectToAction("Index");
         }

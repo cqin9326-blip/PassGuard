@@ -90,5 +90,17 @@ namespace PassGuard.DAL
         {
             return _context.VisitPasses.Count(v => v.Status == "Active");
         }
+
+        public bool HasActivePassForVisitorAndHome(int visitorId, int homeId, int? ignoreVisitPassId = null)
+        {
+            DateTime now = DateTime.Now;
+
+            return _context.VisitPasses.Any(v =>
+                v.VisitorId == visitorId &&
+                v.HomeId == homeId &&
+                v.ExpiresAt > now &&
+                v.Status == PassStatuses.Active &&
+                (!ignoreVisitPassId.HasValue || v.VisitPassId != ignoreVisitPassId.Value));
+        }
     }
 }

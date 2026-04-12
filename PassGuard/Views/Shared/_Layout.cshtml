@@ -10,10 +10,14 @@
     <link rel="stylesheet" href="~/PassGuard.styles.css" asp-append-version="true" />
 </head>
 
-<body>
+<body class="app-shell">
     <header>
-        <nav class="navbar navbar-expand-sm navbar-light bg-white border-bottom box-shadow mb-3">
+        <nav class="navbar navbar-expand-lg navbar-light app-nav">
             <div class="container-fluid">
+                <a class="app-brand" asp-controller="VisitPass" asp-action="Index">
+                    <span class="app-brand__name">PassGuard</span>
+                    <span class="app-brand__meta">Estate Visitor Control</span>
+                </a>
 
                 <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse">
                     <span class="navbar-toggler-icon"></span>
@@ -27,46 +31,46 @@
                             @if (User.IsInRole("Admin"))
                             {
                                 <li class="nav-item">
-                                    <a class="nav-link text-dark" asp-controller="Dashboard" asp-action="Index">Dashboard</a>
+                                    <a class="nav-link" asp-controller="Dashboard" asp-action="Index">Admin Dashboard</a>
                                 </li>
 
                                 <li class="nav-item">
-                                    <a class="nav-link text-dark" asp-controller="Estate" asp-action="Index">Estates</a>
+                                    <a class="nav-link" asp-controller="Estate" asp-action="Index">Estates</a>
                                 </li>
 
                                 <li class="nav-item">
-                                    <a class="nav-link text-dark" asp-controller="Home" asp-action="Index">Property</a>
+                                    <a class="nav-link" asp-controller="Home" asp-action="Index">Homes</a>
                                 </li>
 
                                 <li class="nav-item">
-                                    <a class="nav-link text-dark" asp-controller="UserManagement" asp-action="Index">Users</a>
+                                    <a class="nav-link" asp-controller="UserManagement" asp-action="Index">Users & Roles</a>
                                 </li>
 
                                 <li class="nav-item">
-                                    <a class="nav-link text-dark" asp-controller="Visitor" asp-action="Index">Visitors</a>
+                                    <a class="nav-link" asp-controller="Visitor" asp-action="Index">Visitors</a>
                                 </li>
 
                                 <li class="nav-item">
-                                    <a class="nav-link text-dark" asp-controller="AuditLog" asp-action="Index">Logs</a>
+                                    <a class="nav-link" asp-controller="AuditLog" asp-action="Index">Audit Logs</a>
                                 </li>
                             }
 
                             @if (User.IsInRole("HomeOwner"))
                             {
                                 <li class="nav-item">
-                                    <a class="nav-link text-dark" asp-controller="HomeOwner" asp-action="Dashboard">My Passes</a>
+                                    <a class="nav-link" asp-controller="HomeOwner" asp-action="Dashboard">Resident Dashboard</a>
                                 </li>
                             }
 
                             @if (User.IsInRole("Security"))
                             {
                                 <li class="nav-item">
-                                    <a class="nav-link text-dark" asp-controller="Security" asp-action="Panel">Security Panel</a>
+                                    <a class="nav-link" asp-controller="Security" asp-action="Panel">Gate Dashboard</a>
                                 </li>
                             }
 
                             <li class="nav-item">
-                                <a class="nav-link text-dark" asp-controller="VisitPass" asp-action="Index">Access</a>
+                                <a class="nav-link" asp-controller="VisitPass" asp-action="Index">Visit Passes</a>
                             </li>
                         }
                     </ul>
@@ -74,7 +78,21 @@
                     <div class="d-flex align-items-center gap-3">
                         @if (User.Identity?.IsAuthenticated == true)
                         {
-                            <span class="text-muted small">@User.Identity.Name</span>
+                            <div class="d-flex align-items-center gap-2 flex-wrap justify-content-end">
+                                @if (User.IsInRole("Admin"))
+                                {
+                                    <span class="role-chip">Admin</span>
+                                }
+                                @if (User.IsInRole("HomeOwner"))
+                                {
+                                    <span class="role-chip">Homeowner</span>
+                                }
+                                @if (User.IsInRole("Security"))
+                                {
+                                    <span class="role-chip">Security</span>
+                                }
+                                <span class="text-muted small">@User.Identity.Name</span>
+                            </div>
 
                             <form asp-controller="Account" asp-action="Logout" method="post" class="mb-0">
                                 <button type="submit" class="btn btn-outline-secondary btn-sm">Logout</button>

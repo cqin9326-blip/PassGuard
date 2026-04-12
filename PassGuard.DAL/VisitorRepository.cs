@@ -23,7 +23,10 @@ namespace PassGuard.DAL
 
         public Visitor? GetByFullNameAndPhone(string fullName, string phone)
         {
-            return _context.Visitors.FirstOrDefault(v => v.FullName == fullName && v.Phone == phone);
+            string normalizedFullName = fullName.Trim();
+            string normalizedPhone = phone.Trim();
+
+            return _context.Visitors.FirstOrDefault(v => v.FullName == normalizedFullName && v.Phone == normalizedPhone);
         }
 
         public List<Visitor> GetAll()
@@ -55,6 +58,17 @@ namespace PassGuard.DAL
                 _context.Visitors.Remove(visitor);
                 _context.SaveChanges();
             }
+        }
+
+        public bool ExistsByFullNameAndPhone(string fullName, string phone, int? ignoreVisitorId = null)
+        {
+            string normalizedFullName = fullName.Trim();
+            string normalizedPhone = phone.Trim();
+
+            return _context.Visitors.Any(v =>
+                v.FullName == normalizedFullName &&
+                v.Phone == normalizedPhone &&
+                (!ignoreVisitorId.HasValue || v.VisitorId != ignoreVisitorId.Value));
         }
     }
 }

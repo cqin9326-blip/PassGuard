@@ -89,6 +89,15 @@ namespace PassGuard.Controllers
                 return NotFound();
             }
 
+            string? currentAdminUserId = _userManager.GetUserId(User);
+
+            if (user.Id == currentAdminUserId && !string.Equals(model.RoleName, "Admin", StringComparison.Ordinal))
+            {
+                ModelState.AddModelError(string.Empty, "You cannot remove your own Admin role.");
+                model.AvailableRoles = _roleManager.Roles.Select(r => r.Name ?? "").Where(r => !string.IsNullOrWhiteSpace(r)).OrderBy(r => r).ToList();
+                return View(model);
+            }
+
             IList<string> currentRoles = await _userManager.GetRolesAsync(user);
 
             if (currentRoles.Any())
@@ -132,6 +141,12 @@ namespace PassGuard.Controllers
             if (user == null)
             {
                 return NotFound();
+            }
+
+            if (user.Id == _userManager.GetUserId(User))
+            {
+                TempData["ErrorMessage"] = "You cannot lock your own account.";
+                return RedirectToAction(nameof(Index));
             }
 
             bool isLocked = user.LockoutEnd.HasValue && user.LockoutEnd > DateTimeOffset.UtcNow;

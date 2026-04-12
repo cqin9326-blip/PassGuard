@@ -119,6 +119,11 @@ namespace PassGuard.BLL
             _repo.Update(visitPass);
         }
 
+        public bool HasActivePassForVisitorAndHome(int visitorId, int homeId, int? ignoreVisitPassId = null)
+        {
+            return _repo.HasActivePassForVisitorAndHome(visitorId, homeId, ignoreVisitPassId);
+        }
+
         private void NormalizeStatuses(IEnumerable<VisitPass> visitPasses)
         {
             foreach (VisitPass visitPass in visitPasses)

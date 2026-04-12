@@ -6,6 +6,11 @@
 
 <h2>Visitor Management</h2>
 
+@if (TempData["ErrorMessage"] is string errorMessage)
+{
+    <div class="alert alert-warning">@errorMessage</div>
+}
+
 <p>
     <a asp-action="Create" class="btn btn-primary">Add Visitor</a>
 </p>
@@ -29,7 +34,9 @@
                 <td>
                     <a asp-action="Details" asp-route-id="@visitor.VisitorId">Details</a> |
                     <a asp-action="Edit" asp-route-id="@visitor.VisitorId">Edit</a> |
-                    <a asp-action="Delete" asp-route-id="@visitor.VisitorId">Delete</a>
+                    <form asp-action="Delete" asp-route-id="@visitor.VisitorId" method="post" class="d-inline">
+                        <button type="submit" class="btn btn-link btn-sm p-0 align-baseline">Delete</button>
+                    </form>
                 </td>
             </tr>
         }

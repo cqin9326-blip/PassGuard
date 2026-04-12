@@ -24,12 +24,28 @@
         </div>
     </div>
 
+    <div class="summary-strip">
+        <div class="summary-pill">
+            <span>Waiting at Gate</span>
+            <strong>@Model.ExpectedVisitorCount</strong>
+        </div>
+        <div class="summary-pill">
+            <span>Checked In Today</span>
+            <strong>@Model.CheckedInTodayCount</strong>
+        </div>
+        <div class="summary-pill">
+            <span>Recent Gate Records</span>
+            <strong>@Model.RecentChecks.Count</strong>
+        </div>
+    </div>
+
     <div class="dashboard-grid">
         <aside class="dashboard-panel dashboard-panel--narrow">
             <h3>Quick Verification</h3>
             <p class="stat-note">Jump straight into code validation before opening the gate.</p>
             <div class="quick-actions">
                 <a asp-controller="VisitPass" asp-action="Verify" class="btn btn-primary">Verify Pass Code</a>
+                <a asp-controller="VisitPass" asp-action="Index" class="btn btn-outline-success">Open Visit Passes</a>
             </div>
             <div class="mini-metric">
                 <span>Visitors Waiting</span>
@@ -67,6 +83,7 @@
                                 <td>@pass.ExpiresAt</td>
                                 <td>
                                     <a asp-controller="VisitPass" asp-action="Details" asp-route-id="@pass.VisitPassId">Details</a> |
+                                    <a asp-controller="VisitPass" asp-action="Verify" class="text-nowrap">Verify Code</a> |
                                     <a asp-controller="GateCheckIn" asp-action="Create" asp-route-visitPassId="@pass.VisitPassId">Record Check-In</a>
                                 </td>
                             </tr>

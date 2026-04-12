@@ -1,68 +1,110 @@
 ﻿@model List<PassGuard.Models.VisitPass>
+@using PassGuard.Models
 
 @{
-    ViewData["Title"] = "Access";
+    ViewData["Title"] = "Visit Passes";
+    int activeCount = Model.Count(item => item.Status == PassStatuses.Active);
+    int usedCount = Model.Count(item => item.Status == PassStatuses.Used);
+    int expiredCount = Model.Count(item => item.Status == PassStatuses.Expired);
+    int revokedCount = Model.Count(item => item.Status == PassStatuses.Revoked);
 }
 
-<h2>Access Information</h2>
+<section class="page-shell">
+    <div class="page-hero">
+        <span class="page-kicker">Visit Pass Registry</span>
+        <h2>Visitor Access Records</h2>
+        <p>Review active, used, expired, and revoked passes in one place, then jump into creation or gate verification when needed.</p>
+    </div>
 
-@if (TempData["ErrorMessage"] is string errorMessage)
-{
-    <div class="alert alert-warning">@errorMessage</div>
-}
-
-<p>
-    @if (User.IsInRole("Admin") || User.IsInRole("HomeOwner"))
+    @if (TempData["ErrorMessage"] is string errorMessage)
     {
-        <a asp-action="Create" class="btn btn-primary">Add</a>
+        <div class="alert alert-warning">@errorMessage</div>
     }
 
-    @if (User.IsInRole("Admin") || User.IsInRole("Security"))
-    {
-        <a asp-action="Verify" class="btn btn-outline-success ms-2">Verify Pass</a>
-    }
-</p>
-
-<table class="table table-bordered">
-    <thead>
-        <tr>
-            <th>Visitor Name</th>
-            <th>Visitor Phone</th>
-            <th>Estate Name</th>
-            <th>Home Address</th>
-            <th>Total Visits</th>
-            <th>Visit Pass Status</th>
-            <th>Check-In</th>
-            <th>Actions</th>
-        </tr>
-    </thead>
-    <tbody>
-        @foreach (var item in Model)
+    <div class="page-actions">
+        @if (User.IsInRole("Admin") || User.IsInRole("HomeOwner"))
         {
-            <tr>
-                <td>@item.Visitor.FullName</td>
-                <td>@item.Visitor.Phone</td>
-                <td>@item.Home.Estate.EstateName</td>
-                <td>@item.Home.Address</td>
-                <td>@item.Home.VisitPasses.Count</td>
-                <td>@item.Status</td>
-                <td>@(item.GateCheckIn == null ? "No" : item.GateCheckIn.Result)</td>
-                <td>
-                    <a asp-action="Details" asp-route-id="@item.VisitPassId">Details</a>
-                    @if (User.IsInRole("Admin") || User.IsInRole("HomeOwner"))
-                    {
-                        <text> | </text><a asp-action="Edit" asp-route-id="@item.VisitPassId">Edit</a>
-                        @if (item.Status == PassGuard.Models.PassStatuses.Active)
-                        {
-                            <text> | </text>
-                            <form asp-action="Revoke" asp-route-id="@item.VisitPassId" method="post" class="d-inline">
-                                <button type="submit" class="btn btn-link btn-sm p-0 align-baseline">Revoke</button>
-                            </form>
-                        }
-                        <text> | </text><a asp-action="Delete" asp-route-id="@item.VisitPassId">Delete</a>
-                    }
-                </td>
-            </tr>
+            <a asp-action="Create" class="btn btn-primary">Create Visit Pass</a>
         }
-    </tbody>
-</table>
+
+        @if (User.IsInRole("Admin") || User.IsInRole("Security"))
+        {
+            <a asp-action="Verify" class="btn btn-outline-success">Verify Pass Code</a>
+        }
+    </div>
+
+    <div class="summary-strip">
+        <div class="summary-pill">
+            <span>Total Passes</span>
+            <strong>@Model.Count</strong>
+        </div>
+        <div class="summary-pill">
+            <span>Active</span>
+            <strong>@activeCount</strong>
+        </div>
+        <div class="summary-pill">
+            <span>Used</span>
+            <strong>@usedCount</strong>
+        </div>
+        <div class="summary-pill">
+            <span>Expired</span>
+            <strong>@expiredCount</strong>
+        </div>
+        <div class="summary-pill">
+            <span>Revoked</span>
+            <strong>@revokedCount</strong>
+        </div>
+    </div>
+
+    <div class="dashboard-panel">
+        <table class="table estate-table">
+            <thead>
+                <tr>
+                    <th>Visitor</th>
+                    <th>Phone</th>
+                    <th>Estate</th>
+                    <th>Home</th>
+                    <th>Home Passes</th>
+                    <th>Status</th>
+                    <th>Gate Result</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model)
+                {
+                    var statusClass = item.Status.ToLowerInvariant();
+                    var gateResult = item.GateCheckIn?.Result ?? "Pending";
+                    var gateResultClass = gateResult == "Pending" ? "pending" : gateResult.ToLowerInvariant();
+                    <tr>
+                        <td>@item.Visitor.FullName</td>
+                        <td>@item.Visitor.Phone</td>
+                        <td>@item.Home.Estate.EstateName</td>
+                        <td>@item.Home.Address</td>
+                        <td>@item.Home.VisitPasses.Count</td>
+                        <td><span class="status-pill status-pill--@statusClass">@item.Status</span></td>
+                        <td><span class="status-pill status-pill--@gateResultClass">@gateResult</span></td>
+                        <td>
+                            <a asp-action="Details" asp-route-id="@item.VisitPassId">Details</a>
+                            @if (User.IsInRole("Admin") || User.IsInRole("HomeOwner"))
+                            {
+                                <text> | </text><a asp-action="Edit" asp-route-id="@item.VisitPassId">Edit</a>
+                                @if (item.Status == PassStatuses.Active)
+                                {
+                                    <text> | </text>
+                                    <form asp-action="Revoke" asp-route-id="@item.VisitPassId" method="post" class="d-inline">
+                                        <button type="submit" class="btn btn-link btn-sm p-0 align-baseline">Revoke</button>
+                                    </form>
+                                }
+                                <text> | </text>
+                                <form asp-action="Delete" asp-route-id="@item.VisitPassId" method="post" class="d-inline">
+                                    <button type="submit" class="btn btn-link btn-sm p-0 align-baseline">Delete</button>
+                                </form>
+                            }
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</section>

@@ -7,6 +7,8 @@ namespace PassGuard.Models.ViewModels
         public int EstateId { get; set; }
 
         [Required]
+        [StringLength(100)]
+        [Display(Name = "Estate Name")]
         public string EstateName { get; set; } = "";
     }
 }

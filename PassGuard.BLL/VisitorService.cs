@@ -41,5 +41,10 @@ namespace PassGuard.BLL
         {
             _repo.Delete(id);
         }
+
+        public bool ExistsByFullNameAndPhone(string fullName, string phone, int? ignoreVisitorId = null)
+        {
+            return _repo.ExistsByFullNameAndPhone(fullName, phone, ignoreVisitorId);
+        }
     }
 }

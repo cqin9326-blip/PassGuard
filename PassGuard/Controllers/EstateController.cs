@@ -36,6 +36,14 @@ namespace PassGuard.Controllers
                 return View(model);
             }
 
+            model.EstateName = model.EstateName.Trim();
+
+            if (_estateService.ExistsByName(model.EstateName))
+            {
+                ModelState.AddModelError(nameof(model.EstateName), "An estate with this name already exists.");
+                return View(model);
+            }
+
             _estateService.Add(new Estate { EstateName = model.EstateName });
             return RedirectToAction(nameof(Index));
         }
@@ -65,11 +73,19 @@ namespace PassGuard.Controllers
                 return View(model);
             }
 
+            model.EstateName = model.EstateName.Trim();
+
             Estate? estate = _estateService.GetById(model.EstateId);
 
             if (estate == null)
             {
                 return NotFound();
+            }
+
+            if (_estateService.ExistsByName(model.EstateName, model.EstateId))
+            {
+                ModelState.AddModelError(nameof(model.EstateName), "An estate with this name already exists.");
+                return View(model);
             }
 
             estate.EstateName = model.EstateName;
@@ -90,8 +106,23 @@ namespace PassGuard.Controllers
             return View(estate);
         }
 
+        [HttpPost]
+        [ValidateAntiForgeryToken]
         public IActionResult Delete(int id)
         {
+            Estate? estate = _estateService.GetById(id);
+
+            if (estate == null)
+            {
+                return NotFound();
+            }
+
+            if (estate.Homes.Any())
+            {
+                TempData["ErrorMessage"] = "You cannot delete an estate that still has homes assigned to it.";
+                return RedirectToAction(nameof(Index));
+            }
+
             _estateService.Delete(id);
             return RedirectToAction(nameof(Index));
         }

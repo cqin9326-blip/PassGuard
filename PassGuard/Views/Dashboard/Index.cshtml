@@ -39,6 +39,25 @@
         </div>
     </div>
 
+    <div class="summary-strip">
+        <div class="summary-pill">
+            <span>Active Passes</span>
+            <strong>@Model.ActivePasses</strong>
+        </div>
+        <div class="summary-pill">
+            <span>Used Passes</span>
+            <strong>@Model.UsedPasses</strong>
+        </div>
+        <div class="summary-pill">
+            <span>Expired Passes</span>
+            <strong>@Model.ExpiredPasses</strong>
+        </div>
+        <div class="summary-pill">
+            <span>Revoked Passes</span>
+            <strong>@Model.RevokedPasses</strong>
+        </div>
+    </div>
+
     <div class="dashboard-grid">
         <section class="dashboard-panel dashboard-panel--wide">
             <h3>Pass Status Mix</h3>
@@ -68,6 +87,7 @@
                 <a asp-controller="Estate" asp-action="Index" class="btn btn-primary">Manage Estates</a>
                 <a asp-controller="Home" asp-action="Index" class="btn btn-outline-success">Manage Homes</a>
                 <a asp-controller="UserManagement" asp-action="Index" class="btn btn-outline-success">Manage Users</a>
+                <a asp-controller="AuditLog" asp-action="Index" class="btn btn-outline-success">Open Audit Logs</a>
             </div>
             <div class="mini-metric">
                 <span>Visitor Records</span>

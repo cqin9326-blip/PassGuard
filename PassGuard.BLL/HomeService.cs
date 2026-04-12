@@ -52,5 +52,15 @@ namespace PassGuard.BLL
         {
             _repo.Delete(id);
         }
+
+        public bool ExistsByAddressAndEstateId(string address, int estateId, int? ignoreHomeId = null)
+        {
+            return _repo.ExistsByAddressAndEstateId(address, estateId, ignoreHomeId);
+        }
+
+        public bool ExistsByOwnerUserId(string ownerUserId, int? ignoreHomeId = null)
+        {
+            return _repo.ExistsByOwnerUserId(ownerUserId, ignoreHomeId);
+        }
     }
 }

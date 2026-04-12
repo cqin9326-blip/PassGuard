@@ -1,22 +1,27 @@
 ﻿@model List<PassGuard.Models.Home>
 
 @{
-    ViewData["Title"] = "Property";
+    ViewData["Title"] = "Homes";
 }
 
-<h2>Property Information</h2>
+<h2>Home Management</h2>
+
+@if (TempData["ErrorMessage"] is string errorMessage)
+{
+    <div class="alert alert-warning">@errorMessage</div>
+}
 
 <p>
-    <a asp-action="Create" class="btn btn-primary">Add</a>
+    <a asp-action="Create" class="btn btn-primary">Add Home</a>
 </p>
 
 <table class="table table-bordered">
     <thead>
         <tr>
             <th>Estate Name</th>
-            <th>Owner User Id</th>
+            <th>Homeowner</th>
             <th>Home Address</th>
-            <th>Total Visits</th>
+            <th>Visit Passes</th>
             <th>Actions</th>
         </tr>
     </thead>
@@ -31,7 +36,9 @@
                 <td>
                     <a asp-action="Edit" asp-route-id="@item.HomeId">Edit</a> |
                     <a asp-action="Details" asp-route-id="@item.HomeId">Details</a> |
-                    <a asp-action="Delete" asp-route-id="@item.HomeId">Delete</a>
+                    <form asp-action="Delete" asp-route-id="@item.HomeId" method="post" class="d-inline">
+                        <button type="submit" class="btn btn-link btn-sm p-0 align-baseline">Delete</button>
+                    </form>
                 </td>
             </tr>
         }

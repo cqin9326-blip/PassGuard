@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("PassGuard.Models")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+699ecd0d56a52c8a384000c51a2c855b32eed67f")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+abc51c330a20abcb24c8760b4732410c01d4560b")]
 [assembly: System.Reflection.AssemblyProductAttribute("PassGuard.Models")]
 [assembly: System.Reflection.AssemblyTitleAttribute("PassGuard.Models")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

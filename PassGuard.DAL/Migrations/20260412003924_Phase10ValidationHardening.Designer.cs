@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using PassGuard.DAL;
 
@@ -11,9 +12,11 @@ using PassGuard.DAL;
 namespace PassGuard.DAL.Migrations
 {
     [DbContext(typeof(PassGuardContext))]
-    partial class PassGuardContextModelSnapshot : ModelSnapshot
+    [Migration("20260412003924_Phase10ValidationHardening")]
+    partial class Phase10ValidationHardening
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

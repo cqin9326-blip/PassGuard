@@ -29,6 +29,21 @@
         </div>
     </div>
 
+    <div class="summary-strip">
+        <div class="summary-pill">
+            <span>Ready for Entry</span>
+            <strong>@Model.ActivePassCount</strong>
+        </div>
+        <div class="summary-pill">
+            <span>Visit History</span>
+            <strong>@Model.VisitHistory.Count</strong>
+        </div>
+        <div class="summary-pill">
+            <span>Revoked Early</span>
+            <strong>@Model.RevokedPassCount</strong>
+        </div>
+    </div>
+
     <div class="dashboard-grid">
         <section class="dashboard-panel dashboard-panel--wide">
             <h3>Active Passes</h3>

@@ -41,7 +41,8 @@ namespace PassGuard.DAL
 
         public Home? GetByAddressAndEstateId(string address, int estateId)
         {
-            return _context.Homes.FirstOrDefault(h => h.Address == address && h.EstateId == estateId);
+            string normalizedAddress = address.Trim();
+            return _context.Homes.FirstOrDefault(h => h.Address == normalizedAddress && h.EstateId == estateId);
         }
 
         public Home? GetByOwnerUserId(string ownerUserId)
@@ -81,6 +82,23 @@ namespace PassGuard.DAL
         public int Count()
         {
             return _context.Homes.Count();
+        }
+
+        public bool ExistsByAddressAndEstateId(string address, int estateId, int? ignoreHomeId = null)
+        {
+            string normalizedAddress = address.Trim();
+
+            return _context.Homes.Any(h =>
+                h.Address == normalizedAddress &&
+                h.EstateId == estateId &&
+                (!ignoreHomeId.HasValue || h.HomeId != ignoreHomeId.Value));
+        }
+
+        public bool ExistsByOwnerUserId(string ownerUserId, int? ignoreHomeId = null)
+        {
+            return _context.Homes.Any(h =>
+                h.OwnerUserId == ownerUserId &&
+                (!ignoreHomeId.HasValue || h.HomeId != ignoreHomeId.Value));
         }
     }
 }

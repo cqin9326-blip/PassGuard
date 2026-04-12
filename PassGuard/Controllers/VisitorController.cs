@@ -35,6 +35,15 @@ namespace PassGuard.Controllers
                 return View(model);
             }
 
+            model.FullName = model.FullName.Trim();
+            model.Phone = model.Phone.Trim();
+
+            if (_visitorService.ExistsByFullNameAndPhone(model.FullName, model.Phone))
+            {
+                ModelState.AddModelError(string.Empty, "This visitor already exists.");
+                return View(model);
+            }
+
             _visitorService.Add(new Visitor
             {
                 FullName = model.FullName,
@@ -70,11 +79,20 @@ namespace PassGuard.Controllers
                 return View(model);
             }
 
+            model.FullName = model.FullName.Trim();
+            model.Phone = model.Phone.Trim();
+
             Visitor? visitor = _visitorService.GetById(model.VisitorId);
 
             if (visitor == null)
             {
                 return NotFound();
+            }
+
+            if (_visitorService.ExistsByFullNameAndPhone(model.FullName, model.Phone, model.VisitorId))
+            {
+                ModelState.AddModelError(string.Empty, "This visitor already exists.");
+                return View(model);
             }
 
             visitor.FullName = model.FullName;
@@ -96,8 +114,23 @@ namespace PassGuard.Controllers
             return View(visitor);
         }
 
+        [HttpPost]
+        [ValidateAntiForgeryToken]
         public IActionResult Delete(int id)
         {
+            Visitor? visitor = _visitorService.GetById(id);
+
+            if (visitor == null)
+            {
+                return NotFound();
+            }
+
+            if (visitor.VisitPasses.Any())
+            {
+                TempData["ErrorMessage"] = "You cannot delete a visitor who already has visit pass history.";
+                return RedirectToAction(nameof(Index));
+            }
+
             _visitorService.Delete(id);
             return RedirectToAction(nameof(Index));
         }
