@@ -7,7 +7,7 @@
 <h2>Home Details</h2>
 
 <p><strong>Estate Name:</strong> @Model.Estate.EstateName</p>
-<p><strong>Owner User Id:</strong> @Model.OwnerUserId</p>
+<p><strong>Homeowner:</strong> @(ViewBag.HomeOwnerName ?? Model.OwnerUserId)</p>
 <p><strong>Home Address:</strong> @Model.Address</p>
 
 <hr />

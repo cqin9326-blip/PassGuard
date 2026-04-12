@@ -30,8 +30,9 @@
     </div>
 
     <div class="mb-3">
-        <label asp-for="SecurityUserId" class="form-label">Security User Id</label>
-        <input asp-for="SecurityUserId" class="form-control" readonly="@User.IsInRole("Security")" />
+        <label class="form-label">Security Officer</label>
+        <input asp-for="SecurityUserId" type="hidden" />
+        <input class="form-control" value="@(ViewBag.SecurityUserName ?? Model.SecurityUserId)" readonly />
     </div>
 
     <button type="submit" class="btn btn-warning">Update</button>

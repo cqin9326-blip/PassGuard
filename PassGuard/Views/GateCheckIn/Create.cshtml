@@ -24,8 +24,9 @@
     </div>
 
     <div class="mb-3">
-        <label asp-for="SecurityUserId" class="form-label">Security User Id</label>
-        <input asp-for="SecurityUserId" class="form-control" value="@ViewBag.SecurityUserId" readonly />
+        <label class="form-label">Security Officer</label>
+        <input asp-for="SecurityUserId" type="hidden" value="@ViewBag.SecurityUserId" />
+        <input class="form-control" value="@ViewBag.SecurityUserName" readonly />
     </div>
 
     <div class="mb-3">

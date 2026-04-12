@@ -53,9 +53,10 @@ namespace PassGuard.Controllers
             return user != null && await _userManager.IsInRoleAsync(user, "HomeOwner");
         }
 
-        public IActionResult Index()
+        public async Task<IActionResult> Index()
         {
             var homes = _homeService.GetAllWithDetails();
+            ViewBag.HomeOwnerNames = await GetHomeOwnerNamesAsync(homes.Select(h => h.OwnerUserId));
             return View(homes);
         }
 
@@ -203,7 +204,7 @@ namespace PassGuard.Controllers
             return RedirectToAction("Index");
         }
 
-        public IActionResult Details(int id)
+        public async Task<IActionResult> Details(int id)
         {
             Home? home = _homeService.GetFullDetails(id);
 
@@ -212,7 +213,23 @@ namespace PassGuard.Controllers
                 return NotFound();
             }
 
+            ApplicationUser? homeOwnerUser = await _userManager.FindByIdAsync(home.OwnerUserId);
+            ViewBag.HomeOwnerName = homeOwnerUser?.FullName ?? homeOwnerUser?.Email ?? home.OwnerUserId;
+
             return View(home);
+        }
+
+        private async Task<Dictionary<string, string>> GetHomeOwnerNamesAsync(IEnumerable<string> ownerUserIds)
+        {
+            Dictionary<string, string> homeOwnerNames = new Dictionary<string, string>();
+
+            foreach (string ownerUserId in ownerUserIds.Where(id => !string.IsNullOrWhiteSpace(id)).Distinct())
+            {
+                ApplicationUser? user = await _userManager.FindByIdAsync(ownerUserId);
+                homeOwnerNames[ownerUserId] = user?.FullName ?? user?.Email ?? ownerUserId;
+            }
+
+            return homeOwnerNames;
         }
 
         [HttpPost]

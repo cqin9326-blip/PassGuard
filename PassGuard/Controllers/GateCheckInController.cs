@@ -1,7 +1,9 @@
 ﻿using System.Security.Claims;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using PassGuard.BLL;
+using PassGuard.DAL;
 using PassGuard.Models;
 
 namespace PassGuard.Controllers
@@ -12,18 +14,21 @@ namespace PassGuard.Controllers
         private readonly GateCheckInService _gateCheckInService;
         private readonly VisitPassService _visitPassService;
         private readonly AuditLogService _auditLogService;
+        private readonly UserManager<ApplicationUser> _userManager;
 
         public GateCheckInController(
             GateCheckInService gateCheckInService,
             VisitPassService visitPassService,
-            AuditLogService auditLogService)
+            AuditLogService auditLogService,
+            UserManager<ApplicationUser> userManager)
         {
             _gateCheckInService = gateCheckInService;
             _visitPassService = visitPassService;
             _auditLogService = auditLogService;
+            _userManager = userManager;
         }
 
-        public IActionResult Create(int visitPassId)
+        public async Task<IActionResult> Create(int visitPassId)
         {
             VisitPass? visitPass = _visitPassService.GetFullDetails(visitPassId);
 
@@ -40,6 +45,7 @@ namespace PassGuard.Controllers
 
             ViewBag.VisitPassId = visitPassId;
             ViewBag.SecurityUserId = User.FindFirstValue(ClaimTypes.NameIdentifier) ?? "";
+            ViewBag.SecurityUserName = await GetSecurityUserDisplayNameAsync(ViewBag.SecurityUserId as string);
             return View();
         }
 
@@ -96,7 +102,7 @@ namespace PassGuard.Controllers
             return RedirectToAction("Details", "VisitPass", new { id = visitPassId });
         }
 
-        public IActionResult Edit(int id)
+        public async Task<IActionResult> Edit(int id)
         {
             GateCheckIn? gateCheckIn = _gateCheckInService.GetById(id);
 
@@ -106,6 +112,7 @@ namespace PassGuard.Controllers
             }
 
             gateCheckIn.SecurityUserId ??= User.FindFirstValue(ClaimTypes.NameIdentifier) ?? "";
+            ViewBag.SecurityUserName = await GetSecurityUserDisplayNameAsync(gateCheckIn.SecurityUserId);
 
             return View(gateCheckIn);
         }
@@ -177,6 +184,17 @@ namespace PassGuard.Controllers
             {
                 _visitPassService.NormalizeStatus(visitPass);
             }
+        }
+
+        private async Task<string> GetSecurityUserDisplayNameAsync(string? securityUserId)
+        {
+            if (string.IsNullOrWhiteSpace(securityUserId))
+            {
+                return "Current security user";
+            }
+
+            ApplicationUser? user = await _userManager.FindByIdAsync(securityUserId);
+            return user?.FullName ?? user?.Email ?? securityUserId;
         }
     }
 }

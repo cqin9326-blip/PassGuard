@@ -1,6 +1,7 @@
 ﻿@model List<PassGuard.Models.Home>
 
 @{
+    var homeOwnerNames = ViewBag.HomeOwnerNames as Dictionary<string, string> ?? new Dictionary<string, string>();
     ViewData["Title"] = "Homes";
 }
 
@@ -30,7 +31,7 @@
         {
             <tr>
                 <td>@item.Estate.EstateName</td>
-                <td>@item.OwnerUserId</td>
+                <td>@(homeOwnerNames.TryGetValue(item.OwnerUserId, out var ownerName) ? ownerName : item.OwnerUserId)</td>
                 <td>@item.Address</td>
                 <td>@item.VisitPasses.Count</td>
                 <td>

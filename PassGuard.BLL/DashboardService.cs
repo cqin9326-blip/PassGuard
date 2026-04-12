@@ -132,6 +132,7 @@ namespace PassGuard.BLL
             List<VisitPass> expectedVisitors = visitPasses
                 .Where(v =>
                     v.Status == PassStatuses.Active &&
+                    v.CreatedAt.Date <= today &&
                     v.ExpiresAt.Date >= today &&
                     v.GateCheckIn == null)
                 .OrderBy(v => v.ExpiresAt)
@@ -144,6 +145,7 @@ namespace PassGuard.BLL
 
             return new SecurityPanelViewModel
             {
+                PanelDate = today,
                 ExpectedVisitorCount = expectedVisitors.Count,
                 CheckedInTodayCount = recentChecks.Count,
                 ExpectedVisitors = expectedVisitors,

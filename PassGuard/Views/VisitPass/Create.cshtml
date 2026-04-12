@@ -35,7 +35,8 @@
                 <label asp-for="OwnerUserId" class="form-label"></label>
                 @if (User.IsInRole("HomeOwner"))
                 {
-                    <input asp-for="OwnerUserId" class="form-control" readonly />
+                    <input asp-for="OwnerUserId" type="hidden" />
+                    <input class="form-control" value="@ViewBag.SelectedHomeOwnerName" readonly />
                 }
                 else
                 {
@@ -53,20 +54,32 @@
             </div>
         </div>
 
-        <div>
-            <p class="form-section-title">Visitor Record</p>
-            <p class="form-section-copy">Use an existing visitor profile so the pass can be verified and audited consistently.</p>
-        </div>
+    <div>
+        <p class="form-section-title">Visitor Record</p>
+        <p class="form-section-copy">Use an existing visitor profile so the pass can be verified and audited consistently.</p>
+    </div>
 
-        <div class="form-grid">
-            <div class="mb-3">
-                <label asp-for="VisitorId" class="form-label"></label>
-                <select asp-for="VisitorId" asp-items="ViewBag.Visitors" class="form-control">
+    @if (TempData["SuccessMessage"] is string successMessage)
+    {
+        <div class="alert alert-success mb-0">@successMessage</div>
+    }
+
+    <div class="form-grid">
+        <div class="mb-3">
+            <label asp-for="VisitorId" class="form-label"></label>
+            <select asp-for="VisitorId" asp-items="ViewBag.Visitors" class="form-control">
                     <option value="">Select visitor</option>
                 </select>
                 <span asp-validation-for="VisitorId" class="text-danger"></span>
             </div>
         </div>
+
+        @if (User.IsInRole("HomeOwner"))
+        {
+            <div class="page-actions">
+                <a asp-controller="Visitor" asp-action="Create" class="btn btn-outline-success">Create New Visitor</a>
+            </div>
+        }
 
         <div class="alert alert-warning mb-0">
             A secure pass code will be generated after creation and shown once, so be ready to share it with the visitor immediately.

@@ -38,24 +38,35 @@ namespace PassGuard.BLL
 
         public bool VerifyCode(string plainCode, string storedHash)
         {
-            string[] parts = storedHash.Split('.');
+            try
+            {
+                string[] parts = storedHash.Split('.');
 
-            if (parts.Length != 3 || !int.TryParse(parts[0], out int iterations))
+                if (parts.Length != 3 || !int.TryParse(parts[0], out int iterations))
+                {
+                    return false;
+                }
+
+                byte[] salt = Convert.FromBase64String(parts[1]);
+                byte[] expectedHash = Convert.FromBase64String(parts[2]);
+
+                byte[] actualHash = Rfc2898DeriveBytes.Pbkdf2(
+                    plainCode,
+                    salt,
+                    iterations,
+                    HashAlgorithmName.SHA256,
+                    expectedHash.Length);
+
+                return CryptographicOperations.FixedTimeEquals(actualHash, expectedHash);
+            }
+            catch (FormatException)
             {
                 return false;
             }
-
-            byte[] salt = Convert.FromBase64String(parts[1]);
-            byte[] expectedHash = Convert.FromBase64String(parts[2]);
-
-            byte[] actualHash = Rfc2898DeriveBytes.Pbkdf2(
-                plainCode,
-                salt,
-                iterations,
-                HashAlgorithmName.SHA256,
-                expectedHash.Length);
-
-            return CryptographicOperations.FixedTimeEquals(actualHash, expectedHash);
+            catch (ArgumentException)
+            {
+                return false;
+            }
         }
 
         public string CalculateStatus(VisitPass visitPass, DateTime? now = null)

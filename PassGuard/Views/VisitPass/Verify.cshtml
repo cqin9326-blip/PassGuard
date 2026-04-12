@@ -39,6 +39,14 @@
                 <div class="alert @(Model.IsMatch ? "alert-success" : "alert-warning")">
                     @Model.Message
                 </div>
+
+                @if (!string.IsNullOrWhiteSpace(Model.StatusLabel))
+                {
+                    var statusClass = Model.StatusLabel.ToLowerInvariant().Replace(" ", "-");
+                    <div class="badge-cluster mb-3">
+                        <span class="status-pill status-pill--@statusClass">@Model.StatusLabel</span>
+                    </div>
+                }
             }
             else
             {

@@ -8,14 +8,14 @@
     <div class="dashboard-hero">
         <span class="dashboard-kicker">Gate Operations</span>
         <h2>Security Gate Panel</h2>
-        <p>Verify incoming guests quickly, monitor expected arrivals, and review the latest gate movements across the estate.</p>
+        <p>Verify incoming guests quickly, monitor upcoming visits for @Model.PanelDate.ToString("MMMM d"), and review the latest gate movements across the estate.</p>
     </div>
 
     <div class="stats-grid">
         <div class="stat-card">
-            <span class="stat-label">Expected Today</span>
+            <span class="stat-label">Upcoming Today</span>
             <div class="stat-value">@Model.ExpectedVisitorCount</div>
-            <div class="stat-note">Visitors still awaiting arrival</div>
+            <div class="stat-note">Active passes still valid for today's gate window</div>
         </div>
         <div class="stat-card">
             <span class="stat-label">Checked In</span>
@@ -26,7 +26,7 @@
 
     <div class="summary-strip">
         <div class="summary-pill">
-            <span>Waiting at Gate</span>
+            <span>Upcoming Today</span>
             <strong>@Model.ExpectedVisitorCount</strong>
         </div>
         <div class="summary-pill">
@@ -58,7 +58,7 @@
         </aside>
 
         <section class="dashboard-panel dashboard-panel--wide">
-            <h3>Today's Expected Visitors</h3>
+            <h3>Upcoming Visits for Today</h3>
             @if (Model.ExpectedVisitors.Any())
             {
                 <table class="table estate-table">
@@ -68,6 +68,7 @@
                             <th>Phone</th>
                             <th>Estate</th>
                             <th>Home</th>
+                            <th>Valid From</th>
                             <th>Expires</th>
                             <th>Action</th>
                         </tr>
@@ -80,6 +81,7 @@
                                 <td>@pass.Visitor.Phone</td>
                                 <td>@pass.Home.Estate.EstateName</td>
                                 <td>@pass.Home.Address</td>
+                                <td>@pass.CreatedAt</td>
                                 <td>@pass.ExpiresAt</td>
                                 <td>
                                     <a asp-controller="VisitPass" asp-action="Details" asp-route-id="@pass.VisitPassId">Details</a> |
@@ -93,7 +95,7 @@
             }
             else
             {
-                <p class="dashboard-empty">No expected visitors are queued for entry right now.</p>
+                <p class="dashboard-empty">No active visitor passes are queued for today right now.</p>
             }
         </section>
 

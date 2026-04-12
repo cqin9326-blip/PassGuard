@@ -6,7 +6,7 @@ using PassGuard.Models.ViewModels;
 
 namespace PassGuard.Controllers
 {
-    [Authorize(Roles = "Admin")]
+    [Authorize]
     public class VisitorController : Controller
     {
         private readonly VisitorService _visitorService;
@@ -16,17 +16,20 @@ namespace PassGuard.Controllers
             _visitorService = visitorService;
         }
 
+        [Authorize(Roles = "Admin")]
         public IActionResult Index()
         {
             return View(_visitorService.GetAll());
         }
 
+        [Authorize(Roles = "Admin,HomeOwner")]
         public IActionResult Create()
         {
             return View(new VisitorFormViewModel());
         }
 
         [HttpPost]
+        [Authorize(Roles = "Admin,HomeOwner")]
         [ValidateAntiForgeryToken]
         public IActionResult Create(VisitorFormViewModel model)
         {
@@ -50,9 +53,17 @@ namespace PassGuard.Controllers
                 Phone = model.Phone
             });
 
+            TempData["SuccessMessage"] = "Visitor created successfully.";
+
+            if (User.IsInRole("HomeOwner"))
+            {
+                return RedirectToAction("Create", "VisitPass");
+            }
+
             return RedirectToAction(nameof(Index));
         }
 
+        [Authorize(Roles = "Admin")]
         public IActionResult Edit(int id)
         {
             Visitor? visitor = _visitorService.GetById(id);
@@ -71,6 +82,7 @@ namespace PassGuard.Controllers
         }
 
         [HttpPost]
+        [Authorize(Roles = "Admin")]
         [ValidateAntiForgeryToken]
         public IActionResult Edit(VisitorFormViewModel model)
         {
@@ -102,6 +114,7 @@ namespace PassGuard.Controllers
             return RedirectToAction(nameof(Index));
         }
 
+        [Authorize(Roles = "Admin")]
         public IActionResult Details(int id)
         {
             Visitor? visitor = _visitorService.GetById(id);
@@ -115,6 +128,7 @@ namespace PassGuard.Controllers
         }
 
         [HttpPost]
+        [Authorize(Roles = "Admin")]
         [ValidateAntiForgeryToken]
         public IActionResult Delete(int id)
         {

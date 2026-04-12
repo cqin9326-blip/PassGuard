@@ -80,6 +80,18 @@ namespace PassGuard.Controllers
             return user != null && await _userManager.IsInRoleAsync(user, "HomeOwner");
         }
 
+        private async Task PopulateSelectedHomeOwnerNameAsync(string? ownerUserId)
+        {
+            if (string.IsNullOrWhiteSpace(ownerUserId))
+            {
+                ViewBag.SelectedHomeOwnerName = "Assigned homeowner";
+                return;
+            }
+
+            ApplicationUser? user = await _userManager.FindByIdAsync(ownerUserId);
+            ViewBag.SelectedHomeOwnerName = user?.FullName ?? user?.Email ?? ownerUserId;
+        }
+
         public IActionResult Index()
         {
             List<VisitPass> visitPasses = User.IsInRole("HomeOwner")
@@ -103,6 +115,7 @@ namespace PassGuard.Controllers
                 }
 
                 PopulateVisitors();
+                await PopulateSelectedHomeOwnerNameAsync(home.OwnerUserId);
                 return View(new AccessViewModel
                 {
                     EstateName = home.Estate.EstateName,
@@ -125,6 +138,7 @@ namespace PassGuard.Controllers
             {
                 await PopulateHomeOwnerUsersAsync(model.OwnerUserId);
                 PopulateVisitors(model.VisitorId);
+                await PopulateSelectedHomeOwnerNameAsync(User.IsInRole("HomeOwner") ? CurrentUserId : model.OwnerUserId);
                 return View(model);
             }
 
@@ -283,6 +297,7 @@ namespace PassGuard.Controllers
             }
 
             await PopulateHomeOwnerUsersAsync(visitPass.Home.OwnerUserId);
+            await PopulateSelectedHomeOwnerNameAsync(visitPass.Home.OwnerUserId);
 
             GateCheckIn? latestCheckIn = visitPass.GateCheckIn;
 
@@ -323,6 +338,7 @@ namespace PassGuard.Controllers
             {
                 await PopulateHomeOwnerUsersAsync(model.OwnerUserId);
                 PopulateVisitors(model.VisitorId);
+                await PopulateSelectedHomeOwnerNameAsync(User.IsInRole("HomeOwner") ? CurrentUserId : model.OwnerUserId);
                 return View(model);
             }
 
@@ -461,7 +477,7 @@ namespace PassGuard.Controllers
             return RedirectToAction("Index");
         }
 
-        public IActionResult Details(int id)
+        public async Task<IActionResult> Details(int id)
         {
             VisitPass? visitPass = _visitPassService.GetFullDetails(id);
 
@@ -473,6 +489,15 @@ namespace PassGuard.Controllers
             if (User.IsInRole("HomeOwner") && visitPass.CreatedByUserId != CurrentUserId)
             {
                 return Forbid();
+            }
+
+            ApplicationUser? homeOwnerUser = await _userManager.FindByIdAsync(visitPass.Home.OwnerUserId);
+            ViewBag.HomeOwnerName = homeOwnerUser?.FullName ?? homeOwnerUser?.Email ?? visitPass.Home.OwnerUserId;
+
+            if (!string.IsNullOrWhiteSpace(visitPass.GateCheckIn?.SecurityUserId))
+            {
+                ApplicationUser? securityUser = await _userManager.FindByIdAsync(visitPass.GateCheckIn.SecurityUserId);
+                ViewBag.SecurityUserName = securityUser?.FullName ?? securityUser?.Email ?? visitPass.GateCheckIn.SecurityUserId;
             }
 
             return View(visitPass);
@@ -491,6 +516,7 @@ namespace PassGuard.Controllers
         {
             if (string.IsNullOrWhiteSpace(model.EnteredCode))
             {
+                model.StatusLabel = "Missing Code";
                 model.Message = "Enter a pass code to verify.";
                 return View(model);
             }
@@ -501,6 +527,7 @@ namespace PassGuard.Controllers
 
             if (matchedPass == null)
             {
+                model.StatusLabel = "Wrong Code";
                 model.Message = "Invalid pass code. No matching visit pass was found.";
                 model.IsMatch = false;
                 return View(model);
@@ -538,6 +565,7 @@ namespace PassGuard.Controllers
                 _visitPassService.Update(matchedPass);
 
                 model.Message = "Pass verified successfully. Visitor may enter.";
+                model.StatusLabel = PassStatuses.Used;
                 model.IsMatch = true;
                 model.VisitPass = _visitPassService.GetFullDetails(matchedPass.VisitPassId);
                 _auditLogService.Log(
@@ -564,6 +592,7 @@ namespace PassGuard.Controllers
                 matchedPass.GateCheckIn = deniedCheckIn;
             }
 
+            model.StatusLabel = currentStatus;
             model.Message = $"Pass found, but it is {currentStatus} and cannot be used.";
             model.IsMatch = false;
             model.VisitPass = _visitPassService.GetFullDetails(matchedPass.VisitPassId);

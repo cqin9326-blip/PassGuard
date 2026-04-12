@@ -64,8 +64,8 @@
                     <dd>@Model.Home.Address</dd>
                 </div>
                 <div class="detail-row">
-                    <dt>Homeowner Id</dt>
-                    <dd>@Model.Home.OwnerUserId</dd>
+                    <dt>Homeowner</dt>
+                    <dd>@(ViewBag.HomeOwnerName ?? Model.Home.OwnerUserId)</dd>
                 </div>
             </dl>
         </section>
@@ -107,7 +107,7 @@
                     </div>
                     <div class="detail-row">
                         <dt>Security User</dt>
-                        <dd>@Model.GateCheckIn.SecurityUserId</dd>
+                        <dd>@(ViewBag.SecurityUserName ?? Model.GateCheckIn.SecurityUserId)</dd>
                     </div>
                     <div class="detail-row">
                         <dt>Notes</dt>

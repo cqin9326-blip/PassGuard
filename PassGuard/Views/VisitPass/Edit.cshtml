@@ -24,7 +24,8 @@
         <label asp-for="OwnerUserId" class="form-label"></label>
         @if (User.IsInRole("HomeOwner"))
         {
-            <input asp-for="OwnerUserId" class="form-control" readonly />
+            <input asp-for="OwnerUserId" type="hidden" />
+            <input class="form-control" value="@ViewBag.SelectedHomeOwnerName" readonly />
         }
         else
         {

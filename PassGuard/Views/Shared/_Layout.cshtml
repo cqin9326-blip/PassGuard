@@ -60,6 +60,10 @@
                                 <li class="nav-item">
                                     <a class="nav-link" asp-controller="HomeOwner" asp-action="Dashboard">Resident Dashboard</a>
                                 </li>
+
+                                <li class="nav-item">
+                                    <a class="nav-link" asp-controller="Visitor" asp-action="Create">Add Visitor</a>
+                                </li>
                             }
 
                             @if (User.IsInRole("Security"))
