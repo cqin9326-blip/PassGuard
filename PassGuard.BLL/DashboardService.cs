@@ -6,6 +6,7 @@ namespace PassGuard.BLL
 {
     public class DashboardService
     {
+        private readonly PassGuardContext _context;
         private readonly EstateRepository _estateRepository;
         private readonly HomeRepository _homeRepository;
         private readonly VisitPassRepository _visitPassRepository;
@@ -13,12 +14,14 @@ namespace PassGuard.BLL
         private readonly AuditLogRepository _auditLogRepository;
 
         public DashboardService(
+            PassGuardContext context,
             EstateRepository estateRepository,
             HomeRepository homeRepository,
             VisitPassRepository visitPassRepository,
             GateCheckInRepository gateCheckInRepository,
             AuditLogRepository auditLogRepository)
         {
+            _context = context;
             _estateRepository = estateRepository;
             _homeRepository = homeRepository;
             _visitPassRepository = visitPassRepository;
@@ -36,10 +39,7 @@ namespace PassGuard.BLL
             {
                 TotalEstates = _estateRepository.Count(),
                 TotalHomes = _homeRepository.Count(),
-                TotalUsers = _homeRepository.GetAllWithDetails()
-                    .Select(h => h.OwnerUserId)
-                    .Distinct()
-                    .Count(),
+                TotalUsers = _context.Users.Count(),
                 TotalVisitors = _visitPassRepository.CountDistinctVisitors(),
                 ActivePasses = visitPasses.Count(v => v.Status == PassStatuses.Active),
                 UsedPasses = visitPasses.Count(v => v.Status == PassStatuses.Used),
@@ -55,6 +55,9 @@ namespace PassGuard.BLL
                         EstateName = v.Home.Estate.EstateName,
                         CreatedAt = v.CreatedAt,
                         ExpiresAt = v.ExpiresAt,
+                        ExpiresDisplay = v.Status == PassStatuses.Used && string.Equals(v.GateCheckIn?.Result, "Approved", StringComparison.OrdinalIgnoreCase)
+                            ? "Expired"
+                            : v.ExpiresAt.ToString(),
                         Status = v.Status,
                         Result = v.GateCheckIn?.Result ?? "N/A"
                     })

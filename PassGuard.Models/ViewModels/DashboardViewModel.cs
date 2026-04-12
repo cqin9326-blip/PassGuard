@@ -23,6 +23,7 @@
         public string EstateName { get; set; } = "";
         public DateTime CreatedAt { get; set; }
         public DateTime ExpiresAt { get; set; }
+        public string ExpiresDisplay { get; set; } = "";
         public string Status { get; set; } = "";
         public string Result { get; set; } = "";
     }

@@ -92,6 +92,12 @@ namespace PassGuard.Controllers
             ViewBag.SelectedHomeOwnerName = user?.FullName ?? user?.Email ?? ownerUserId;
         }
 
+        private static bool IsSecurityApprovedPass(VisitPass visitPass)
+        {
+            return string.Equals(visitPass.Status, PassStatuses.Used, StringComparison.Ordinal) ||
+                string.Equals(visitPass.GateCheckIn?.Result, "Approved", StringComparison.OrdinalIgnoreCase);
+        }
+
         public IActionResult Index()
         {
             List<VisitPass> visitPasses = User.IsInRole("HomeOwner")
@@ -296,6 +302,12 @@ namespace PassGuard.Controllers
                 return Forbid();
             }
 
+            if (IsSecurityApprovedPass(visitPass))
+            {
+                TempData["ErrorMessage"] = "Approved visit passes can no longer be edited.";
+                return RedirectToAction(nameof(Index));
+            }
+
             await PopulateHomeOwnerUsersAsync(visitPass.Home.OwnerUserId);
             await PopulateSelectedHomeOwnerNameAsync(visitPass.Home.OwnerUserId);
 
@@ -356,6 +368,12 @@ namespace PassGuard.Controllers
             if (User.IsInRole("HomeOwner") && visitPass.CreatedByUserId != CurrentUserId)
             {
                 return Forbid();
+            }
+
+            if (IsSecurityApprovedPass(visitPass))
+            {
+                TempData["ErrorMessage"] = "Approved visit passes can no longer be edited.";
+                return RedirectToAction(nameof(Index));
             }
 
             Home? home = _homeService.GetFullDetails(visitPass.HomeId);

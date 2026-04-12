@@ -88,7 +88,10 @@
                             <a asp-action="Details" asp-route-id="@item.VisitPassId">Details</a>
                             @if (User.IsInRole("Admin") || User.IsInRole("HomeOwner"))
                             {
-                                <text> | </text><a asp-action="Edit" asp-route-id="@item.VisitPassId">Edit</a>
+                                @if (item.Status != PassStatuses.Used && !string.Equals(gateResult, "Approved", StringComparison.OrdinalIgnoreCase))
+                                {
+                                    <text> | </text><a asp-action="Edit" asp-route-id="@item.VisitPassId">Edit</a>
+                                }
                                 @if (item.Status == PassStatuses.Active)
                                 {
                                     <text> | </text>
