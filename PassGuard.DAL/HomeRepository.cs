@@ -19,7 +19,23 @@ namespace PassGuard.DAL
             return _context.Homes
                 .Include(h => h.Estate)
                 .Include(h => h.VisitPasses)
+                    .ThenInclude(v => v.Visitor)
+                .Include(h => h.VisitPasses)
+                    .ThenInclude(v => v.GateCheckIn)
                 .OrderBy(h => h.OwnerUserId)
+                .ToList();
+        }
+
+        public List<Home> GetByEstateIdWithDetails(int estateId)
+        {
+            return _context.Homes
+                .Include(h => h.Estate)
+                .Include(h => h.VisitPasses)
+                    .ThenInclude(v => v.Visitor)
+                .Include(h => h.VisitPasses)
+                    .ThenInclude(v => v.GateCheckIn)
+                .Where(h => h.EstateId == estateId)
+                .OrderBy(h => h.Address)
                 .ToList();
         }
 

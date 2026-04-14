@@ -53,11 +53,33 @@ namespace PassGuard.Controllers
             return user != null && await _userManager.IsInRoleAsync(user, "HomeOwner");
         }
 
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(int? estateId = null)
         {
-            var homes = _homeService.GetAllWithDetails();
+            List<Home> homes = estateId.HasValue
+                ? _homeService.GetByEstateIdWithDetails(estateId.Value)
+                : _homeService.GetAllWithDetails();
+
+            List<Estate> estates = _estateService.GetAll();
+
+            HomeIndexViewModel model = new HomeIndexViewModel
+            {
+                SelectedEstateId = estateId,
+                SelectedEstateName = estateId.HasValue
+                    ? estates.FirstOrDefault(e => e.EstateId == estateId.Value)?.EstateName ?? ""
+                    : "",
+                Estates = estates
+                    .Select(e => new HomeEstateOptionViewModel
+                    {
+                        EstateId = e.EstateId,
+                        EstateName = e.EstateName,
+                        Selected = estateId.HasValue && e.EstateId == estateId.Value
+                    })
+                    .ToList(),
+                Homes = homes
+            };
+
             ViewBag.HomeOwnerNames = await GetHomeOwnerNamesAsync(homes.Select(h => h.OwnerUserId));
-            return View(homes);
+            return View(model);
         }
 
         public async Task<IActionResult> Create()

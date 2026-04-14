@@ -7,9 +7,9 @@ namespace PassGuard.Infrastructure
     {
         private static readonly (string Role, string Email, string FullName, string Password)[] DefaultUsers =
         {
-            ("Admin", "admin@passguard.local", "PassGuard Admin", "Admin123!"),
-            ("HomeOwner", "homeowner@passguard.local", "Demo HomeOwner", "HomeOwner123!"),
-            ("Security", "security@passguard.local", "Demo Security", "Security123!")
+            ("Admin", "admin@email.com", "PassGuard Admin", "Admin123!"),
+            ("HomeOwner", "homeowner@email.com", "Demo HomeOwner", "HomeOwner123!"),
+            ("Security", "security@email.com", "Demo Security", "Security123!")
         };
 
         public static async Task SeedAsync(IServiceProvider services)
@@ -29,7 +29,7 @@ namespace PassGuard.Infrastructure
 
             foreach ((string role, string email, string fullName, string password) in DefaultUsers)
             {
-                ApplicationUser? user = await userManager.FindByEmailAsync(email);
+                ApplicationUser? user = await FindSeedUserAsync(userManager, role, email, fullName);
 
                 if (user == null)
                 {
@@ -57,13 +57,58 @@ namespace PassGuard.Infrastructure
                 }
 
                 bool shouldForcePasswordChange = role != "Admin";
+                bool requiresUpdate =
+                    !string.Equals(user.Email, email, StringComparison.OrdinalIgnoreCase) ||
+                    !string.Equals(user.UserName, email, StringComparison.OrdinalIgnoreCase) ||
+                    !string.Equals(user.FullName, fullName, StringComparison.Ordinal) ||
+                    user.MustChangePassword != shouldForcePasswordChange ||
+                    !user.EmailConfirmed;
 
-                if (user.MustChangePassword != shouldForcePasswordChange)
+                if (requiresUpdate)
                 {
+                    user.Email = email;
+                    user.UserName = email;
+                    user.FullName = fullName;
+                    user.EmailConfirmed = true;
                     user.MustChangePassword = shouldForcePasswordChange;
-                    await userManager.UpdateAsync(user);
+
+                    IdentityResult updateResult = await userManager.UpdateAsync(user);
+
+                    if (!updateResult.Succeeded)
+                    {
+                        string errors = string.Join("; ", updateResult.Errors.Select(e => e.Description));
+                        throw new InvalidOperationException($"Failed to update seeded user '{email}': {errors}");
+                    }
                 }
             }
+        }
+
+        private static async Task<ApplicationUser?> FindSeedUserAsync(
+            UserManager<ApplicationUser> userManager,
+            string role,
+            string email,
+            string fullName)
+        {
+            ApplicationUser? user = await userManager.FindByEmailAsync(email);
+
+            if (user != null)
+            {
+                return user;
+            }
+
+            IList<ApplicationUser> usersInRole = await userManager.GetUsersInRoleAsync(role);
+
+            user = usersInRole.FirstOrDefault(u =>
+                string.Equals(u.FullName, fullName, StringComparison.Ordinal));
+
+            if (user != null)
+            {
+                return user;
+            }
+
+            return usersInRole.FirstOrDefault(u =>
+                !string.IsNullOrWhiteSpace(u.Email) &&
+                u.Email.EndsWith("@passguard.local", StringComparison.OrdinalIgnoreCase));
         }
     }
 }

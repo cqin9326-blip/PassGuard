@@ -18,6 +18,11 @@ namespace PassGuard.BLL
             return _repo.GetAllWithDetails();
         }
 
+        public List<Home> GetByEstateIdWithDetails(int estateId)
+        {
+            return _repo.GetByEstateIdWithDetails(estateId);
+        }
+
         public Home? GetFullDetails(int id)
         {
             return _repo.GetFullDetails(id);

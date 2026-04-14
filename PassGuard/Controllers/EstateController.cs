@@ -96,14 +96,28 @@ namespace PassGuard.Controllers
 
         public IActionResult Details(int id)
         {
-            Estate? estate = _estateService.GetById(id);
+            Estate? estate = _estateService.GetFullDetails(id);
 
             if (estate == null)
             {
                 return NotFound();
             }
 
-            return View(estate);
+            DateTime today = DateTime.Today;
+            List<VisitPass> visitPasses = estate.Homes.SelectMany(h => h.VisitPasses).ToList();
+
+            EstateDetailsViewModel model = new EstateDetailsViewModel
+            {
+                EstateId = estate.EstateId,
+                EstateName = estate.EstateName,
+                HomeCount = estate.Homes.Count,
+                VisitPassCount = visitPasses.Count,
+                ActivePassCount = visitPasses.Count(v => v.Status == PassStatuses.Active),
+                CheckedInTodayCount = visitPasses.Count(v => v.GateCheckIn != null && v.GateCheckIn.CheckInTime.Date == today),
+                Homes = estate.Homes.OrderBy(h => h.Address).ToList()
+            };
+
+            return View(model);
         }
 
         [HttpPost]

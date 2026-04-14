@@ -27,6 +27,18 @@ namespace PassGuard.DAL
                 .FirstOrDefault(e => e.EstateId == id);
         }
 
+        public Estate? GetFullDetails(int id)
+        {
+            return _context.Estates
+                .Include(e => e.Homes)
+                    .ThenInclude(h => h.VisitPasses)
+                        .ThenInclude(v => v.Visitor)
+                .Include(e => e.Homes)
+                    .ThenInclude(h => h.VisitPasses)
+                        .ThenInclude(v => v.GateCheckIn)
+                .FirstOrDefault(e => e.EstateId == id);
+        }
+
         public List<Estate> GetAll()
         {
             return _context.Estates

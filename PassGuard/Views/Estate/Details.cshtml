@@ -1,21 +1,78 @@
-@model PassGuard.Models.Estate
+@model PassGuard.Models.ViewModels.EstateDetailsViewModel
 
 @{
     ViewData["Title"] = "Estate Details";
 }
 
-<h2>Estate Details</h2>
+<section class="page-shell">
+    <div class="page-hero">
+        <span class="page-kicker">Estate View</span>
+        <h2>@Model.EstateName</h2>
+        <p>Review the homes, visit-pass volume, and today’s gate activity attached to this estate.</p>
+    </div>
 
-<p><strong>Estate Name:</strong> @Model.EstateName</p>
-<p><strong>Total Homes:</strong> @Model.Homes.Count</p>
+    <div class="summary-strip">
+        <div class="summary-pill">
+            <span>Homes</span>
+            <strong>@Model.HomeCount</strong>
+        </div>
+        <div class="summary-pill">
+            <span>Visit Passes</span>
+            <strong>@Model.VisitPassCount</strong>
+        </div>
+        <div class="summary-pill">
+            <span>Active Passes</span>
+            <strong>@Model.ActivePassCount</strong>
+        </div>
+        <div class="summary-pill">
+            <span>Checked In Today</span>
+            <strong>@Model.CheckedInTodayCount</strong>
+        </div>
+    </div>
 
-@if (Model.Homes.Any())
-{
-    <h4>Homes</h4>
-    <ul>
-        @foreach (var home in Model.Homes)
+    <div class="page-actions">
+        <a asp-controller="Home" asp-action="Index" asp-route-estateId="@Model.EstateId" class="btn btn-primary">Filter Homes by This Estate</a>
+        <a asp-action="Index" class="btn btn-outline-success">Back to Estates</a>
+    </div>
+
+    <section class="dashboard-panel">
+        <h3>Homes in This Estate</h3>
+        @if (Model.Homes.Any())
         {
-            <li>@home.Address</li>
+            <table class="table estate-table">
+                <thead>
+                    <tr>
+                        <th>Home Address</th>
+                        <th>Visit Passes</th>
+                        <th>Latest Visitor</th>
+                        <th>Latest Status</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var home in Model.Homes)
+                    {
+                        var latestPass = home.VisitPasses
+                            .OrderByDescending(v => v.CreatedAt)
+                            .FirstOrDefault();
+                        var latestStatus = latestPass?.Status ?? "No Passes";
+                        var statusClass = latestPass == null ? "pending" : latestStatus.ToLowerInvariant();
+                        <tr>
+                            <td>@home.Address</td>
+                            <td>@home.VisitPasses.Count</td>
+                            <td>@(latestPass?.Visitor.FullName ?? "No visitors yet")</td>
+                            <td><span class="status-pill status-pill--@statusClass">@latestStatus</span></td>
+                            <td>
+                                <a asp-controller="Home" asp-action="Details" asp-route-id="@home.HomeId">Home Details</a>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
         }
-    </ul>
-}
+        else
+        {
+            <p class="dashboard-empty">No homes have been assigned to this estate yet.</p>
+        }
+    </section>
+</section>
