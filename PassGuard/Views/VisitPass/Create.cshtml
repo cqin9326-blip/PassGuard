@@ -1,0 +1,87 @@
+﻿@model PassGuard.Models.ViewModels.AccessViewModel
+
+@{
+    ViewData["Title"] = "Create Visit Pass";
+}
+
+<section class="page-shell">
+    <div class="page-hero">
+        <span class="page-kicker">Pass Creation</span>
+        <h2>Create a New Visit Pass</h2>
+        <p>Generate a secure code that can be shown once and verified at the gate.</p>
+    </div>
+
+    <form asp-action="Create" method="post" class="form-shell">
+        <div asp-validation-summary="ModelOnly" class="text-danger mb-0"></div>
+
+        <div class="form-grid">
+            <div class="mb-3">
+                <label asp-for="EstateName" class="form-label"></label>
+                <input asp-for="EstateName" class="form-control" readonly="@(User.IsInRole("HomeOwner"))" />
+                <span asp-validation-for="EstateName" class="text-danger"></span>
+            </div>
+
+            <div class="mb-3">
+                <label asp-for="OwnerUserId" class="form-label"></label>
+                @if (User.IsInRole("HomeOwner"))
+                {
+                    <input asp-for="OwnerUserId" type="hidden" />
+                    <input class="form-control" value="@ViewBag.SelectedHomeOwnerName" readonly />
+                }
+                else
+                {
+                    <select asp-for="OwnerUserId" asp-items="ViewBag.HomeOwnerUsers" class="form-control">
+                        <option value="">Select homeowner</option>
+                    </select>
+                }
+                <span asp-validation-for="OwnerUserId" class="text-danger"></span>
+            </div>
+
+            <div class="mb-3">
+                <label asp-for="Address" class="form-label"></label>
+                <input asp-for="Address" class="form-control" readonly="@(User.IsInRole("HomeOwner"))" />
+                <span asp-validation-for="Address" class="text-danger"></span>
+            </div>
+        </div>
+
+    <div>
+        <p class="form-section-title">Visitor Record</p>
+
+        @if (User.IsInRole("HomeOwner"))
+        {
+            <div class="page-actions">
+                <a asp-controller="Visitor" asp-action="Create" class="btn btn-outline-success">Create New Visitor</a>
+            </div>
+        }
+        <p class="form-section-copy">OR</p>
+        <p class="form-section-copy">Use an existing visitor profile.</p>
+    </div>
+
+    @if (TempData["SuccessMessage"] is string successMessage)
+    {
+        <div class="alert alert-success mb-0">@successMessage</div>
+    }
+
+    <div class="form-grid">
+        <div class="mb-3">
+            <select asp-for="VisitorId" asp-items="ViewBag.Visitors" class="form-control">
+                    <option value="">Select visitor</option>
+                </select>
+                <span asp-validation-for="VisitorId" class="text-danger"></span>
+            </div>
+        </div>
+
+        <div class="alert alert-warning mb-0">
+            A secure pass code will be generated after creation and shown once, so be ready to share it with the visitor immediately.
+        </div>
+
+        <div class="page-actions">
+            <button type="submit" class="btn btn-success">Generate Visit Pass</button>
+            <a asp-action="Index" class="btn btn-outline-success">Back to Visit Passes</a>
+        </div>
+    </form>
+</section>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

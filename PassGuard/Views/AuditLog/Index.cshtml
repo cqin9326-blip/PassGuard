@@ -1,0 +1,31 @@
+@model List<PassGuard.Models.AuditLog>
+
+@{
+    ViewData["Title"] = "Audit Logs";
+}
+
+<h2>Audit Log History</h2>
+
+<table class="table estate-table">
+    <thead>
+        <tr>
+            <th>Time</th>
+            <th>Action</th>
+            <th>Entity</th>
+            <th>User</th>
+            <th>Detail</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var log in Model)
+        {
+            <tr>
+                <td>@log.Timestamp</td>
+                <td>@log.ActionType</td>
+                <td>@log.EntityType @log.EntityId</td>
+                <td>@(string.IsNullOrWhiteSpace(log.UserEmail) ? log.UserId : log.UserEmail)</td>
+                <td>@log.Detail</td>
+            </tr>
+        }
+    </tbody>
+</table>

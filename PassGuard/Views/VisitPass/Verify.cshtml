@@ -1,0 +1,109 @@
+@model PassGuard.Models.ViewModels.VerifyPassViewModel
+
+@{
+    ViewData["Title"] = "Verify Pass";
+}
+
+<section class="page-shell">
+    <div class="page-hero">
+        <span class="page-kicker">Gate Verification</span>
+        <h2>Verify a Visitor Pass Code</h2>
+        <p>Enter the code presented at the gate to confirm the visitor, check the pass status, and see the latest gate decision.</p>
+    </div>
+
+    <div class="verify-shell">
+        <section class="verify-card">
+            <h3>Code Entry</h3>
+            <p class="form-section-copy">The code is matched securely against stored hashes. Use uppercase or lowercase; the system will normalize it.</p>
+
+            <form asp-action="Verify" method="post" class="form-shell">
+                <div asp-validation-summary="ModelOnly" class="text-danger mb-0"></div>
+
+                <div class="mb-3">
+                    <label asp-for="EnteredCode" class="form-label">Pass Code</label>
+                    <input asp-for="EnteredCode" class="form-control verify-code-input" autocomplete="off" placeholder="Enter pass code" />
+                </div>
+
+                <div class="page-actions">
+                    <button type="submit" class="btn btn-primary">Verify Pass Code</button>
+                    <a asp-controller="Security" asp-action="Panel" class="btn btn-outline-success">Back to Gate Dashboard</a>
+                </div>
+            </form>
+        </section>
+
+        <section class="verify-card">
+            <h3>Verification Result</h3>
+
+            @if (!string.IsNullOrWhiteSpace(Model.Message))
+            {
+                <div class="alert @(Model.IsMatch ? "alert-success" : "alert-warning")">
+                    @Model.Message
+                </div>
+
+                @if (!string.IsNullOrWhiteSpace(Model.StatusLabel))
+                {
+                    var statusClass = Model.StatusLabel.ToLowerInvariant().Replace(" ", "-");
+                    <div class="badge-cluster mb-3">
+                        <span class="status-pill status-pill--@statusClass">@Model.StatusLabel</span>
+                    </div>
+                }
+            }
+            else
+            {
+                <p class="dashboard-empty">No pass has been checked yet. Submit a code to view the visitor and pass details here.</p>
+            }
+
+            @if (Model.VisitPass != null)
+            {
+                <div class="badge-cluster mb-3">
+                    <span class="status-pill status-pill--@Model.VisitPass.Status.ToLowerInvariant()">@Model.VisitPass.Status</span>
+                    <span class="status-pill status-pill--@((Model.VisitPass.GateCheckIn?.Result ?? "Pending").ToLowerInvariant().Replace(" ", "-"))">@(Model.VisitPass.GateCheckIn?.Result ?? "Pending")</span>
+                </div>
+
+                <dl class="detail-list">
+                    <div class="detail-row">
+                        <dt>Visitor</dt>
+                        <dd>@Model.VisitPass.Visitor.FullName</dd>
+                    </div>
+                    <div class="detail-row">
+                        <dt>Phone</dt>
+                        <dd>@Model.VisitPass.Visitor.Phone</dd>
+                    </div>
+                    <div class="detail-row">
+                        <dt>Estate</dt>
+                        <dd>@Model.VisitPass.Home.Estate.EstateName</dd>
+                    </div>
+                    <div class="detail-row">
+                        <dt>Home</dt>
+                        <dd>@Model.VisitPass.Home.Address</dd>
+                    </div>
+                    <div class="detail-row">
+                        <dt>Expires At</dt>
+                        <dd>@Model.VisitPass.ExpiresAt</dd>
+                    </div>
+                </dl>
+
+                @if (Model.VisitPass.GateCheckIn != null)
+                {
+                    <div class="mt-3">
+                        <p class="form-section-title">Latest Gate Record</p>
+                        <dl class="detail-list">
+                            <div class="detail-row">
+                                <dt>Result</dt>
+                                <dd>@Model.VisitPass.GateCheckIn.Result</dd>
+                            </div>
+                            <div class="detail-row">
+                                <dt>Checked In At</dt>
+                                <dd>@Model.VisitPass.GateCheckIn.CheckInTime</dd>
+                            </div>
+                            <div class="detail-row">
+                                <dt>Notes</dt>
+                                <dd>@(string.IsNullOrWhiteSpace(Model.VisitPass.GateCheckIn.Note) ? "No notes recorded" : Model.VisitPass.GateCheckIn.Note)</dd>
+                            </div>
+                        </dl>
+                    </div>
+                }
+            }
+        </section>
+    </div>
+</section>

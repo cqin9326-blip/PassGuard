@@ -1,0 +1,39 @@
+﻿@model PassGuard.Models.ViewModels.PropertyViewModel
+
+@{
+    ViewData["Title"] = "Add Home";
+}
+
+<h2>Add Home</h2>
+
+<form asp-action="Create" method="post">
+    <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+
+    <div class="mb-3">
+        <label asp-for="EstateName" class="form-label"></label>
+        <select asp-for="EstateName" asp-items="ViewBag.Estates" class="form-control">
+            <option value="">Select estate</option>
+        </select>
+        <span asp-validation-for="EstateName" class="text-danger"></span>
+    </div>
+
+    <div class="mb-3">
+        <label asp-for="OwnerUserId" class="form-label"></label>
+        <select asp-for="OwnerUserId" asp-items="ViewBag.HomeOwnerUsers" class="form-control">
+            <option value="">Select homeowner</option>
+        </select>
+        <span asp-validation-for="OwnerUserId" class="text-danger"></span>
+    </div>
+
+    <div class="mb-3">
+        <label asp-for="Address" class="form-label"></label>
+        <input asp-for="Address" class="form-control" />
+        <span asp-validation-for="Address" class="text-danger"></span>
+    </div>
+
+    <button type="submit" class="btn btn-success">Save</button>
+</form>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

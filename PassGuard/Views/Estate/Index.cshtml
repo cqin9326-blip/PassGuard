@@ -1,0 +1,51 @@
+@model List<PassGuard.Models.Estate>
+
+@{
+    ViewData["Title"] = "Estates";
+}
+
+<section class="page-shell">
+    <div class="page-hero">
+        <span class="page-kicker">Estate Management</span>
+        <h2>Managed Estates</h2>
+        <p>Open any estate to view its homes, active visit passes and activity.</p>
+    </div>
+
+@if (TempData["ErrorMessage"] is string errorMessage)
+{
+    <div class="alert alert-warning">@errorMessage</div>
+}
+
+    <div class="page-actions">
+        <a asp-action="Create" class="btn btn-primary">Add Estate</a>
+    </div>
+
+    <div class="dashboard-panel">
+        <table class="table estate-table">
+            <thead>
+                <tr>
+                    <th>Estate Name</th>
+                    <th>Homes</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var estate in Model)
+                {
+                    <tr>
+                        <td>@estate.EstateName</td>
+                        <td>@estate.Homes.Count</td>
+                        <td>
+                            <a asp-action="Details" asp-route-id="@estate.EstateId">Estate View</a> |
+                            <a asp-controller="Home" asp-action="Index" asp-route-estateId="@estate.EstateId">View Homes</a> |
+                            <a asp-action="Edit" asp-route-id="@estate.EstateId">Edit</a> |
+                            <form asp-action="Delete" asp-route-id="@estate.EstateId" method="post" class="d-inline">
+                                <button type="submit" class="btn btn-link btn-sm p-0 align-baseline">Delete</button>
+                            </form>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</section>

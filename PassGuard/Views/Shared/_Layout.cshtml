@@ -4,46 +4,136 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>@ViewData["Title"] - PassGuard</title>
+
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/PassGuard.styles.css" asp-append-version="true" />
 </head>
-<body>
+
+<body class="app-shell">
     <header>
-        <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
+        <nav class="navbar navbar-expand-lg navbar-light app-nav">
             <div class="container-fluid">
-                <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">PassGuard</a>
-                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent"
-                        aria-expanded="false" aria-label="Toggle navigation">
+                <a class="app-brand" asp-controller="VisitPass" asp-action="Index">
+                    <span class="app-brand__name">PassGuard</span>
+                    <span class="app-brand__meta">Estate Visitor Control</span>
+                </a>
+
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse">
                     <span class="navbar-toggler-icon"></span>
                 </button>
+
                 <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
+
                     <ul class="navbar-nav flex-grow-1">
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Index">Home</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
-                        </li>
+                        @if (User.Identity?.IsAuthenticated == true)
+                        {
+                            @if (User.IsInRole("Admin"))
+                            {
+                                <li class="nav-item">
+                                    <a class="nav-link" asp-controller="Dashboard" asp-action="Index">Admin Dashboard</a>
+                                </li>
+
+                                <li class="nav-item">
+                                    <a class="nav-link" asp-controller="Estate" asp-action="Index">Estates</a>
+                                </li>
+
+                                <li class="nav-item">
+                                    <a class="nav-link" asp-controller="Home" asp-action="Index">Homes</a>
+                                </li>
+
+                                <li class="nav-item">
+                                    <a class="nav-link" asp-controller="UserManagement" asp-action="Index">Users & Roles</a>
+                                </li>
+
+                                <li class="nav-item">
+                                    <a class="nav-link" asp-controller="Visitor" asp-action="Index">Visitors</a>
+                                </li>
+
+                                <li class="nav-item">
+                                    <a class="nav-link" asp-controller="AuditLog" asp-action="Index">Audit Logs</a>
+                                </li>
+                            }
+
+                            @if (User.IsInRole("HomeOwner"))
+                            {
+                                <li class="nav-item">
+                                    <a class="nav-link" asp-controller="HomeOwner" asp-action="Dashboard">Resident Dashboard</a>
+                                </li>
+
+                                <li class="nav-item">
+                                    <a class="nav-link" asp-controller="Visitor" asp-action="Create">Add Visitor</a>
+                                </li>
+                            }
+
+                            @if (User.IsInRole("Security"))
+                            {
+                                <li class="nav-item">
+                                    <a class="nav-link" asp-controller="Security" asp-action="Panel">Gate Dashboard</a>
+                                </li>
+                            }
+
+                            <li class="nav-item">
+                                <a class="nav-link" asp-controller="VisitPass" asp-action="Index">Visit Passes</a>
+                            </li>
+                        }
                     </ul>
+
+                    <div class="d-flex align-items-center gap-3">
+                        @if (User.Identity?.IsAuthenticated == true)
+                        {
+                            <div class="d-flex align-items-center gap-2 flex-wrap justify-content-end">
+                                @if (User.IsInRole("Admin"))
+                                {
+                                    <span class="role-chip">Admin</span>
+                                }
+                                @if (User.IsInRole("HomeOwner"))
+                                {
+                                    <span class="role-chip">Homeowner</span>
+                                }
+                                @if (User.IsInRole("Security"))
+                                {
+                                    <span class="role-chip">Security</span>
+                                }
+                                <span class="text-muted small">@User.Identity.Name</span>
+                            </div>
+
+                            <a class="btn btn-outline-success btn-sm" asp-controller="Account" asp-action="ChangePassword">Change Password</a>
+
+                            <form asp-controller="Account" asp-action="Logout" method="post" class="mb-0">
+                                <button type="submit" class="btn btn-outline-secondary btn-sm">Logout</button>
+                            </form>
+                        }
+                        else
+                        {
+                            <a class="btn btn-primary btn-sm" asp-controller="Account" asp-action="Login">Login</a>
+                        }
+                    </div>
+
                 </div>
             </div>
         </nav>
     </header>
+
+
     <div class="container">
         <main role="main" class="pb-3">
             @RenderBody()
         </main>
     </div>
 
+
     <footer class="border-top footer text-muted">
         <div class="container">
-            &copy; 2026 - PassGuard - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
+            &copy; 2026 - PassGuard
         </div>
     </footer>
+
+
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>
+
     @await RenderSectionAsync("Scripts", required: false)
 </body>
 </html>

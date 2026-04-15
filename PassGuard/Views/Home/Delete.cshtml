@@ -1,0 +1,71 @@
+@model PassGuard.Models.ViewModels.HomeDeleteViewModel
+
+@{
+    ViewData["Title"] = "Delete Home";
+}
+
+<section class="page-shell">
+    <div class="page-hero">
+        <span class="page-kicker">Delete Confirmation</span>
+        <h2>Delete Home</h2>
+        <p>Review the records tied to this home before removing it from the estate directory.</p>
+    </div>
+
+    @if (TempData["ErrorMessage"] is string errorMessage)
+    {
+        <div class="alert alert-warning">@errorMessage</div>
+    }
+
+    @if (TempData["SuccessMessage"] is string successMessage)
+    {
+        <div class="alert alert-success">@successMessage</div>
+    }
+
+    <div class="dashboard-panel">
+        <dl class="detail-list">
+            <div class="detail-row">
+                <dt>Estate</dt>
+                <dd>@Model.EstateName</dd>
+            </div>
+            <div class="detail-row">
+                <dt>Home Address</dt>
+                <dd>@Model.Address</dd>
+            </div>
+            <div class="detail-row">
+                <dt>Homeowner</dt>
+                <dd>@Model.HomeOwnerName</dd>
+            </div>
+            <div class="detail-row">
+                <dt>Attached Visit Passes</dt>
+                <dd>@Model.VisitPassCount</dd>
+            </div>
+        </dl>
+    </div>
+
+    @if (Model.VisitPassCount > 0)
+    {
+        <div class="dashboard-panel">
+            <h3>Delete Attached Visit Passes First</h3>
+            <p class="dashboard-empty">This home still has visit passes attached. Do you want to delete those visit passes before deleting the home?</p>
+            <div class="page-actions">
+                <form asp-action="DeleteVisitPasses" asp-route-id="@Model.HomeId" method="post" class="mb-0">
+                    <button type="submit" class="btn btn-danger">Yes, Delete Attached Visit Passes</button>
+                </form>
+                <a asp-action="Index" class="btn btn-outline-success">Cancel</a>
+            </div>
+        </div>
+    }
+    else
+    {
+        <div class="dashboard-panel">
+            <h3>Final Home Delete</h3>
+            <p class="dashboard-empty">All attached visit passes are cleared. Do you want to delete this home now?</p>
+            <div class="page-actions">
+                <form asp-action="ConfirmDelete" asp-route-id="@Model.HomeId" method="post" class="mb-0">
+                    <button type="submit" class="btn btn-danger">Yes, Delete Home</button>
+                </form>
+                <a asp-action="Index" class="btn btn-outline-success">Cancel</a>
+            </div>
+        </div>
+    }
+</section>

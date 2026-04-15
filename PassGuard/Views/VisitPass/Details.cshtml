@@ -1,0 +1,138 @@
+﻿@model PassGuard.Models.VisitPass
+
+@{
+    ViewData["Title"] = "Visit Pass Details";
+}
+
+<section class="page-shell">
+    <div class="page-hero">
+        <span class="page-kicker">Visit Pass Detail</span>
+        <h2>@Model.Visitor.FullName's Visitor Pass</h2>
+        <p>Review the visitor record, pass status, expiry window, and gate outcome before making any access decision.</p>
+    </div>
+
+    @if (TempData["SuccessMessage"] is string successMessage)
+    {
+        <div class="alert alert-success">@successMessage</div>
+    }
+
+    @if (TempData["NewPassCode"] is string newPassCode)
+    {
+        <div class="alert alert-warning">
+            <strong>Pass Code:</strong> <code>@newPassCode</code><br />
+            Keep this code now. It is only shown once.
+        </div>
+    }
+
+    <div class="badge-cluster">
+        <span class="status-pill status-pill--@Model.Status.ToLowerInvariant()">@Model.Status</span>
+        <span class="status-pill status-pill--@((Model.GateCheckIn?.Result ?? "Pending").ToLowerInvariant().Replace(" ", "-"))">@(Model.GateCheckIn?.Result ?? "Pending")</span>
+    </div>
+
+    <div class="page-actions">
+        @if ((User.IsInRole("Admin") || User.IsInRole("HomeOwner")) && Model.Status == PassGuard.Models.PassStatuses.Active)
+        {
+            <form asp-action="Revoke" asp-route-id="@Model.VisitPassId" method="post" class="mb-0">
+                <button type="submit" class="btn btn-outline-danger btn-sm">Revoke Pass</button>
+            </form>
+        }
+
+        @if (User.IsInRole("Admin") || User.IsInRole("Security"))
+        {
+            <a asp-action="Verify" class="btn btn-outline-success btn-sm">Open Verification Screen</a>
+        }
+    </div>
+
+    <div class="detail-grid">
+        <section class="detail-card">
+            <h4>Visitor Details</h4>
+            <dl class="detail-list">
+                <div class="detail-row">
+                    <dt>Visitor</dt>
+                    <dd>@Model.Visitor.FullName</dd>
+                </div>
+                <div class="detail-row">
+                    <dt>Phone</dt>
+                    <dd>@Model.Visitor.Phone</dd>
+                </div>
+                <div class="detail-row">
+                    <dt>Estate</dt>
+                    <dd>@Model.Home.Estate.EstateName</dd>
+                </div>
+                <div class="detail-row">
+                    <dt>Home</dt>
+                    <dd>@Model.Home.Address</dd>
+                </div>
+                <div class="detail-row">
+                    <dt>Homeowner</dt>
+                    <dd>@(ViewBag.HomeOwnerName ?? Model.Home.OwnerUserId)</dd>
+                </div>
+            </dl>
+        </section>
+
+        <section class="detail-card">
+            <h4>Pass Summary</h4>
+            <dl class="detail-list">
+                <div class="detail-row">
+                    <dt>Status</dt>
+                    <dd><span class="status-pill status-pill--@Model.Status.ToLowerInvariant()">@Model.Status</span></dd>
+                </div>
+                <div class="detail-row">
+                    <dt>Created At</dt>
+                    <dd>@Model.CreatedAt</dd>
+                </div>
+                <div class="detail-row">
+                    <dt>Expires At</dt>
+                    <dd>@Model.ExpiresAt</dd>
+                </div>
+                <div class="detail-row">
+                    <dt>Gate Result</dt>
+                    <dd><span class="status-pill status-pill--@((Model.GateCheckIn?.Result ?? "Pending").ToLowerInvariant().Replace(" ", "-"))">@(Model.GateCheckIn?.Result ?? "Pending")</span></dd>
+                </div>
+            </dl>
+        </section>
+
+        <section class="detail-card">
+            <h4>Gate Check-In</h4>
+            @if (Model.GateCheckIn != null)
+            {
+                <dl class="detail-list">
+                    <div class="detail-row">
+                        <dt>Result</dt>
+                        <dd>@Model.GateCheckIn.Result</dd>
+                    </div>
+                    <div class="detail-row">
+                        <dt>Time</dt>
+                        <dd>@Model.GateCheckIn.CheckInTime</dd>
+                    </div>
+                    <div class="detail-row">
+                        <dt>Security User</dt>
+                        <dd>@(ViewBag.SecurityUserName ?? Model.GateCheckIn.SecurityUserId)</dd>
+                    </div>
+                    <div class="detail-row">
+                        <dt>Notes</dt>
+                        <dd>@(string.IsNullOrWhiteSpace(Model.GateCheckIn.Note) ? "No notes recorded" : Model.GateCheckIn.Note)</dd>
+                    </div>
+                </dl>
+
+                <div class="page-actions mt-3">
+                    <a asp-controller="GateCheckIn" asp-action="Edit" asp-route-id="@Model.GateCheckIn.GateCheckInId" class="btn btn-outline-success btn-sm">Edit Check-In</a>
+                    <form asp-controller="GateCheckIn" asp-action="Delete" asp-route-id="@Model.GateCheckIn.GateCheckInId" method="post" class="mb-0">
+                        <button type="submit" class="btn btn-link btn-sm p-0 align-baseline">Delete Check-In</button>
+                    </form>
+                </div>
+            }
+            else
+            {
+                <p class="dashboard-empty">No gate check-in has been recorded for this pass yet.</p>
+
+                @if (User.IsInRole("Admin") || User.IsInRole("Security"))
+                {
+                    <div class="page-actions mt-3">
+                        <a asp-controller="GateCheckIn" asp-action="Create" asp-route-visitPassId="@Model.VisitPassId" class="btn btn-primary btn-sm">Record Gate Check-In</a>
+                    </div>
+                }
+            }
+        </section>
+    </div>
+</section>

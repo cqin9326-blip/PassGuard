@@ -1,0 +1,11 @@
+@model PassGuard.Models.Visitor
+
+@{
+    ViewData["Title"] = "Visitor Details";
+}
+
+<h2>Visitor Details</h2>
+
+<p><strong>Full Name:</strong> @Model.FullName</p>
+<p><strong>Phone:</strong> @Model.Phone</p>
+<p><strong>Total Passes:</strong> @Model.VisitPasses.Count</p>

@@ -1,0 +1,136 @@
+@model PassGuard.Models.ViewModels.SecurityPanelViewModel
+
+@{
+    ViewData["Title"] = "Security Gate Panel";
+}
+
+<section class="dashboard-shell">
+    <div class="dashboard-hero">
+        <h2>Security Gate Panel</h2>
+        <p>Verify incoming visitors, monitor upcoming visits for @Model.PanelDate.ToString("MMMM d").</p>
+    </div>
+
+    <div class="stats-grid">
+        <div class="stat-card">
+            <span class="stat-label">Upcoming Today</span>
+            <div class="stat-value">@Model.ExpectedVisitorCount</div>
+            <div class="stat-note">Active passes still valid for today</div>
+        </div>
+        <div class="stat-card">
+            <span class="stat-label">Checked In</span>
+            <div class="stat-value">@Model.CheckedInTodayCount</div>
+            <div class="stat-note">Gate approvals logged today</div>
+        </div>
+    </div>
+
+    <div class="summary-strip">
+        <div class="summary-pill">
+            <span>Upcoming Today</span>
+            <strong>@Model.ExpectedVisitorCount</strong>
+        </div>
+        <div class="summary-pill">
+            <span>Checked In Today</span>
+            <strong>@Model.CheckedInTodayCount</strong>
+        </div>
+        <div class="summary-pill">
+            <span>Recent Gate Records</span>
+            <strong>@Model.RecentChecks.Count</strong>
+        </div>
+    </div>
+
+    <div class="dashboard-grid">
+        <aside class="dashboard-panel dashboard-panel--narrow">
+            <h3>Code Verification</h3>
+            <p class="stat-note">Validate before opening the gate.</p>
+            <div class="quick-actions">
+                <a asp-controller="VisitPass" asp-action="Verify" class="btn btn-primary">Verify Pass Code</a>
+                <a asp-controller="VisitPass" asp-action="Index" class="btn btn-outline-success">Open Visit Passes</a>
+            </div>
+            <div class="mini-metric">
+                <span>Visitors Waiting</span>
+                <strong>@Model.ExpectedVisitorCount</strong>
+            </div>
+            <div class="mini-metric">
+                <span>Recent Entries</span>
+                <strong>@Model.RecentChecks.Count</strong>
+            </div>
+        </aside>
+
+        <section class="dashboard-panel dashboard-panel--wide">
+            <h3>Upcoming Visits for Today</h3>
+            @if (Model.ExpectedVisitors.Any())
+            {
+                <table class="table estate-table">
+                    <thead>
+                        <tr>
+                            <th>Visitor</th>
+                            <th>Phone</th>
+                            <th>Estate</th>
+                            <th>Home</th>
+                            <th>Valid From</th>
+                            <th>Expires</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var pass in Model.ExpectedVisitors)
+                        {
+                            <tr>
+                                <td>@pass.Visitor.FullName</td>
+                                <td>@pass.Visitor.Phone</td>
+                                <td>@pass.Home.Estate.EstateName</td>
+                                <td>@pass.Home.Address</td>
+                                <td>@pass.CreatedAt</td>
+                                <td>@pass.ExpiresAt</td>
+                                <td>
+                                    <a asp-controller="VisitPass" asp-action="Details" asp-route-id="@pass.VisitPassId">Details</a> |
+                                    <a asp-controller="VisitPass" asp-action="Verify" class="text-nowrap">Verify Code</a> |
+                                    <a asp-controller="GateCheckIn" asp-action="Create" asp-route-visitPassId="@pass.VisitPassId">Record Check-In</a>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            }
+            else
+            {
+                <p class="dashboard-empty">No active visitor passes are queued for today right now.</p>
+            }
+        </section>
+
+        <section class="dashboard-panel">
+            <h3>Recent Check-Ins</h3>
+            @if (Model.RecentChecks.Any())
+            {
+                <table class="table estate-table">
+                    <thead>
+                        <tr>
+                            <th>Visitor</th>
+                            <th>Result</th>
+                            <th>Time</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var pass in Model.RecentChecks)
+                        {
+                            var resultClass = (pass.GateCheckIn?.Result ?? "N/A").ToLowerInvariant();
+                            <tr>
+                                <td>@pass.Visitor.FullName</td>
+                                <td><span class="status-pill status-pill--@resultClass">@pass.GateCheckIn?.Result</span></td>
+                                <td>@pass.GateCheckIn?.CheckInTime</td>
+                                <td>
+                                    <a asp-controller="VisitPass" asp-action="Details" asp-route-id="@pass.VisitPassId">Details</a>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            }
+            else
+            {
+                <p class="dashboard-empty">No gate checks have been recorded today.</p>
+            }
+        </section>
+    </div>
+</section>

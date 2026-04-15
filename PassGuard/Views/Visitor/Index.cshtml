@@ -1,0 +1,44 @@
+@model List<PassGuard.Models.Visitor>
+
+@{
+    ViewData["Title"] = "Visitors";
+}
+
+<h2>Visitor Management</h2>
+
+@if (TempData["ErrorMessage"] is string errorMessage)
+{
+    <div class="alert alert-warning">@errorMessage</div>
+}
+
+<p>
+    <a asp-action="Create" class="btn btn-primary">Add Visitor</a>
+</p>
+
+<table class="table table-bordered">
+    <thead>
+        <tr>
+            <th>Full Name</th>
+            <th>Phone</th>
+            <th>Total Passes</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var visitor in Model)
+        {
+            <tr>
+                <td>@visitor.FullName</td>
+                <td>@visitor.Phone</td>
+                <td>@visitor.VisitPasses.Count</td>
+                <td>
+                    <a asp-action="Details" asp-route-id="@visitor.VisitorId">Details</a> |
+                    <a asp-action="Edit" asp-route-id="@visitor.VisitorId">Edit</a> |
+                    <form asp-action="Delete" asp-route-id="@visitor.VisitorId" method="post" class="d-inline">
+                        <button type="submit" class="btn btn-link btn-sm p-0 align-baseline">Delete</button>
+                    </form>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

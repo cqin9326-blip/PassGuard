@@ -1,11 +1,19 @@
 is_global = true
 build_property.TargetFramework = net8.0
+build_property.TargetFramework = net8.0
+build_property.TargetPlatformMinVersion = 
 build_property.TargetPlatformMinVersion = 
 build_property.UsingMicrosoftNETSdkWeb = true
+build_property.UsingMicrosoftNETSdkWeb = true
+build_property.ProjectTypeGuids = 
 build_property.ProjectTypeGuids = 
 build_property.InvariantGlobalization = 
+build_property.InvariantGlobalization = 
+build_property.PlatformNeutralAssembly = 
 build_property.PlatformNeutralAssembly = 
 build_property.EnforceExtendedAnalyzerRules = 
+build_property.EnforceExtendedAnalyzerRules = 
+build_property._SupportedPlatformList = Linux,macOS,Windows
 build_property._SupportedPlatformList = Linux,macOS,Windows
 build_property.RootNamespace = PassGuard
 build_property.RootNamespace = PassGuard
@@ -18,12 +26,76 @@ build_property.GenerateRazorMetadataSourceChecksumAttributes =
 build_property.MSBuildProjectDirectory = /Users/emmanuelolu/backend/sd-330 - Advanced db & ORM/Assignment/PassGuard/PassGuard
 build_property._RazorSourceGeneratorDebug = 
 
+[/Users/emmanuelolu/backend/sd-330 - Advanced db & ORM/Assignment/PassGuard/PassGuard/Views/Account/AccessDenied.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3MvQWNjb3VudC9BY2Nlc3NEZW5pZWQuY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[/Users/emmanuelolu/backend/sd-330 - Advanced db & ORM/Assignment/PassGuard/PassGuard/Views/Account/ChangePassword.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3MvQWNjb3VudC9DaGFuZ2VQYXNzd29yZC5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[/Users/emmanuelolu/backend/sd-330 - Advanced db & ORM/Assignment/PassGuard/PassGuard/Views/Account/Login.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3MvQWNjb3VudC9Mb2dpbi5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[/Users/emmanuelolu/backend/sd-330 - Advanced db & ORM/Assignment/PassGuard/PassGuard/Views/AuditLog/Index.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3MvQXVkaXRMb2cvSW5kZXguY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[/Users/emmanuelolu/backend/sd-330 - Advanced db & ORM/Assignment/PassGuard/PassGuard/Views/Dashboard/Index.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3MvRGFzaGJvYXJkL0luZGV4LmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[/Users/emmanuelolu/backend/sd-330 - Advanced db & ORM/Assignment/PassGuard/PassGuard/Views/Estate/Create.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3MvRXN0YXRlL0NyZWF0ZS5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[/Users/emmanuelolu/backend/sd-330 - Advanced db & ORM/Assignment/PassGuard/PassGuard/Views/Estate/Details.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3MvRXN0YXRlL0RldGFpbHMuY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[/Users/emmanuelolu/backend/sd-330 - Advanced db & ORM/Assignment/PassGuard/PassGuard/Views/Estate/Edit.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3MvRXN0YXRlL0VkaXQuY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[/Users/emmanuelolu/backend/sd-330 - Advanced db & ORM/Assignment/PassGuard/PassGuard/Views/Estate/Index.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3MvRXN0YXRlL0luZGV4LmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[/Users/emmanuelolu/backend/sd-330 - Advanced db & ORM/Assignment/PassGuard/PassGuard/Views/GateCheckIn/Create.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3MvR2F0ZUNoZWNrSW4vQ3JlYXRlLmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[/Users/emmanuelolu/backend/sd-330 - Advanced db & ORM/Assignment/PassGuard/PassGuard/Views/GateCheckIn/Edit.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3MvR2F0ZUNoZWNrSW4vRWRpdC5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[/Users/emmanuelolu/backend/sd-330 - Advanced db & ORM/Assignment/PassGuard/PassGuard/Views/Home/Create.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3MvSG9tZS9DcmVhdGUuY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[/Users/emmanuelolu/backend/sd-330 - Advanced db & ORM/Assignment/PassGuard/PassGuard/Views/Home/Delete.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3MvSG9tZS9EZWxldGUuY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[/Users/emmanuelolu/backend/sd-330 - Advanced db & ORM/Assignment/PassGuard/PassGuard/Views/Home/Details.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3MvSG9tZS9EZXRhaWxzLmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[/Users/emmanuelolu/backend/sd-330 - Advanced db & ORM/Assignment/PassGuard/PassGuard/Views/Home/Edit.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3MvSG9tZS9FZGl0LmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
 [/Users/emmanuelolu/backend/sd-330 - Advanced db & ORM/Assignment/PassGuard/PassGuard/Views/Home/Index.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3MvSG9tZS9JbmRleC5jc2h0bWw=
 build_metadata.AdditionalFiles.CssScope = 
 
-[/Users/emmanuelolu/backend/sd-330 - Advanced db & ORM/Assignment/PassGuard/PassGuard/Views/Home/Privacy.cshtml]
-build_metadata.AdditionalFiles.TargetPath = Vmlld3MvSG9tZS9Qcml2YWN5LmNzaHRtbA==
+[/Users/emmanuelolu/backend/sd-330 - Advanced db & ORM/Assignment/PassGuard/PassGuard/Views/HomeOwner/Dashboard.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3MvSG9tZU93bmVyL0Rhc2hib2FyZC5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[/Users/emmanuelolu/backend/sd-330 - Advanced db & ORM/Assignment/PassGuard/PassGuard/Views/Security/Panel.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3MvU2VjdXJpdHkvUGFuZWwuY3NodG1s
 build_metadata.AdditionalFiles.CssScope = 
 
 [/Users/emmanuelolu/backend/sd-330 - Advanced db & ORM/Assignment/PassGuard/PassGuard/Views/Shared/Error.cshtml]
@@ -32,6 +104,62 @@ build_metadata.AdditionalFiles.CssScope =
 
 [/Users/emmanuelolu/backend/sd-330 - Advanced db & ORM/Assignment/PassGuard/PassGuard/Views/Shared/_ValidationScriptsPartial.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3MvU2hhcmVkL19WYWxpZGF0aW9uU2NyaXB0c1BhcnRpYWwuY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[/Users/emmanuelolu/backend/sd-330 - Advanced db & ORM/Assignment/PassGuard/PassGuard/Views/UserManagement/Create.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3MvVXNlck1hbmFnZW1lbnQvQ3JlYXRlLmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[/Users/emmanuelolu/backend/sd-330 - Advanced db & ORM/Assignment/PassGuard/PassGuard/Views/UserManagement/EditRole.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3MvVXNlck1hbmFnZW1lbnQvRWRpdFJvbGUuY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[/Users/emmanuelolu/backend/sd-330 - Advanced db & ORM/Assignment/PassGuard/PassGuard/Views/UserManagement/Index.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3MvVXNlck1hbmFnZW1lbnQvSW5kZXguY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[/Users/emmanuelolu/backend/sd-330 - Advanced db & ORM/Assignment/PassGuard/PassGuard/Views/Visitor/Create.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3MvVmlzaXRvci9DcmVhdGUuY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[/Users/emmanuelolu/backend/sd-330 - Advanced db & ORM/Assignment/PassGuard/PassGuard/Views/Visitor/Details.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3MvVmlzaXRvci9EZXRhaWxzLmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[/Users/emmanuelolu/backend/sd-330 - Advanced db & ORM/Assignment/PassGuard/PassGuard/Views/Visitor/Edit.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3MvVmlzaXRvci9FZGl0LmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[/Users/emmanuelolu/backend/sd-330 - Advanced db & ORM/Assignment/PassGuard/PassGuard/Views/Visitor/Index.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3MvVmlzaXRvci9JbmRleC5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[/Users/emmanuelolu/backend/sd-330 - Advanced db & ORM/Assignment/PassGuard/PassGuard/Views/VisitPass/Create.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3MvVmlzaXRQYXNzL0NyZWF0ZS5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[/Users/emmanuelolu/backend/sd-330 - Advanced db & ORM/Assignment/PassGuard/PassGuard/Views/VisitPass/Details.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3MvVmlzaXRQYXNzL0RldGFpbHMuY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[/Users/emmanuelolu/backend/sd-330 - Advanced db & ORM/Assignment/PassGuard/PassGuard/Views/VisitPass/Edit.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3MvVmlzaXRQYXNzL0VkaXQuY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[/Users/emmanuelolu/backend/sd-330 - Advanced db & ORM/Assignment/PassGuard/PassGuard/Views/VisitPass/Index.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3MvVmlzaXRQYXNzL0luZGV4LmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[/Users/emmanuelolu/backend/sd-330 - Advanced db & ORM/Assignment/PassGuard/PassGuard/Views/VisitPass/Verify.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3MvVmlzaXRQYXNzL1ZlcmlmeS5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[/Users/emmanuelolu/backend/sd-330 - Advanced db & ORM/Assignment/PassGuard/PassGuard/Views/_Home/Index.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3MvX0hvbWUvSW5kZXguY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[/Users/emmanuelolu/backend/sd-330 - Advanced db & ORM/Assignment/PassGuard/PassGuard/Views/_Home/Privacy.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3MvX0hvbWUvUHJpdmFjeS5jc2h0bWw=
 build_metadata.AdditionalFiles.CssScope = 
 
 [/Users/emmanuelolu/backend/sd-330 - Advanced db & ORM/Assignment/PassGuard/PassGuard/Views/_ViewImports.cshtml]

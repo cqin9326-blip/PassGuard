@@ -1,8 +1,93 @@
-﻿@{
-    ViewData["Title"] = "Home Page";
+﻿@model PassGuard.Models.ViewModels.HomeIndexViewModel
+
+@{
+    var homeOwnerNames = ViewBag.HomeOwnerNames as Dictionary<string, string> ?? new Dictionary<string, string>();
+    ViewData["Title"] = "Homes";
 }
 
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://learn.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
-</div>
+<section class="page-shell">
+    <div class="page-hero">
+        <span class="page-kicker">Home Management</span>
+        <h2>Admin Home Directory</h2>
+        <p>Browse all homes or filter the list to a single estate so you can manage addresses and assigned residents.</p>
+    </div>
+
+    @if (TempData["ErrorMessage"] is string errorMessage)
+    {
+        <div class="alert alert-warning">@errorMessage</div>
+    }
+
+    <div class="page-actions">
+        <a asp-action="Create" class="btn btn-primary">Add Home</a>
+        @if (Model.SelectedEstateId.HasValue)
+        {
+            <a asp-controller="Estate" asp-action="Details" asp-route-id="@Model.SelectedEstateId" class="btn btn-outline-success">Open Estate View</a>
+            <a asp-action="Index" class="btn btn-outline-success">Clear Filter</a>
+        }
+    </div>
+
+    <form method="get" asp-action="Index" class="dashboard-panel">
+        <div class="form-grid">
+            <div class="mb-0">
+                <label for="estateId" class="form-label">Filter by Estate</label>
+                <select id="estateId" name="estateId" class="form-control">
+                    <option value="">All estates</option>
+                    @foreach (var estate in Model.Estates)
+                    {
+                        if (estate.Selected)
+                        {
+                            <option value="@estate.EstateId" selected>@estate.EstateName</option>
+                        }
+                        else
+                        {
+                            <option value="@estate.EstateId">@estate.EstateName</option>
+                        }
+                    }
+                </select>
+            </div>
+            <div class="page-actions align-items-end">
+                <button type="submit" class="btn btn-primary">Apply Filter</button>
+            </div>
+        </div>
+        @if (Model.SelectedEstateId.HasValue)
+        {
+            <p class="form-section-copy mt-3 mb-0">Showing homes for <strong>@Model.SelectedEstateName</strong>.</p>
+        }
+    </form>
+
+    <div class="dashboard-panel">
+        <table class="table estate-table">
+            <thead>
+                <tr>
+                    <th>Estate Name</th>
+                    <th>Homeowner</th>
+                    <th>Home Address</th>
+                    <th>Visit Passes</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model.Homes)
+                {
+                    <tr>
+                        <td>@item.Estate.EstateName</td>
+                        <td>@(homeOwnerNames.TryGetValue(item.OwnerUserId, out var ownerName) ? ownerName : item.OwnerUserId)</td>
+                        <td>@item.Address</td>
+                        <td>@item.VisitPasses.Count</td>
+                        <td>
+                            <a asp-action="Edit" asp-route-id="@item.HomeId">Edit</a> |
+                            <a asp-action="Details" asp-route-id="@item.HomeId">Details</a> |
+                            <a asp-controller="Estate" asp-action="Details" asp-route-id="@item.EstateId">Estate View</a> |
+                            <a asp-action="Delete" asp-route-id="@item.HomeId">Delete</a>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+
+        @if (!Model.Homes.Any())
+        {
+            <p class="dashboard-empty">No homes matched the selected estate filter.</p>
+        }
+    </div>
+</section>

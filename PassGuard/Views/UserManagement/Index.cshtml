@@ -1,0 +1,54 @@
+@model List<PassGuard.Models.ViewModels.UserListItemViewModel>
+
+@{
+    ViewData["Title"] = "Users";
+}
+
+<h2>User Management</h2>
+
+@if (TempData["SuccessMessage"] is string successMessage)
+{
+    <div class="alert alert-success">@successMessage</div>
+}
+
+@if (TempData["ErrorMessage"] is string errorMessage)
+{
+    <div class="alert alert-warning">@errorMessage</div>
+}
+
+<p>
+    <a asp-action="Create" class="btn btn-primary">Create User</a>
+</p>
+
+<table class="table table-bordered">
+    <thead>
+        <tr>
+            <th>Full Name</th>
+            <th>Email</th>
+            <th>Role</th>
+            <th>Status</th>
+            <th>Assigned Home</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var user in Model)
+        {
+            <tr>
+                <td>@user.FullName</td>
+                <td>@user.Email</td>
+                <td>@user.RoleName</td>
+                <td>@(user.IsLocked ? "Disabled" : "Active")</td>
+                <td>@(string.IsNullOrWhiteSpace(user.HomeAddress) ? "Not linked" : user.HomeAddress)</td>
+                <td>
+                    <a asp-action="EditRole" asp-route-id="@user.UserId">Edit Role</a> |
+                    <form asp-action="ToggleLock" asp-route-id="@user.UserId" method="post" class="d-inline">
+                        <button type="submit" class="btn btn-link btn-sm p-0 align-baseline">
+                            @(user.IsLocked ? "Enable" : "Disable")
+                        </button>
+                    </form>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

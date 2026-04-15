@@ -1,0 +1,82 @@
+﻿@model PassGuard.Models.ViewModels.AccessViewModel
+
+@{
+    ViewData["Title"] = "Edit Visit Pass";
+}
+
+<h2>Edit Visit Pass</h2>
+
+<form asp-action="Edit" method="post">
+    <input asp-for="VisitPassId" type="hidden" />
+    <input asp-for="HomeId" type="hidden" />
+    <input asp-for="GateCheckInId" type="hidden" />
+    <input asp-for="CodeHash" type="hidden" />
+    <input asp-for="CreatedByUserId" type="hidden" />
+    <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+
+    <div class="mb-3">
+        <label asp-for="EstateName" class="form-label"></label>
+        <input asp-for="EstateName" class="form-control" readonly="@(User.IsInRole("HomeOwner"))" />
+        <span asp-validation-for="EstateName" class="text-danger"></span>
+    </div>
+
+    <div class="mb-3">
+        <label asp-for="OwnerUserId" class="form-label"></label>
+        @if (User.IsInRole("HomeOwner"))
+        {
+            <input asp-for="OwnerUserId" type="hidden" />
+            <input class="form-control" value="@ViewBag.SelectedHomeOwnerName" readonly />
+        }
+        else
+        {
+            <select asp-for="OwnerUserId" asp-items="ViewBag.HomeOwnerUsers" class="form-control">
+                <option value="">Select homeowner</option>
+            </select>
+        }
+        <span asp-validation-for="OwnerUserId" class="text-danger"></span>
+    </div>
+
+    <div class="mb-3">
+        <label asp-for="Address" class="form-label"></label>
+        <input asp-for="Address" class="form-control" readonly="@(User.IsInRole("HomeOwner"))" />
+        <span asp-validation-for="Address" class="text-danger"></span>
+    </div>
+
+    <hr />
+
+    <div class="mb-3">
+        <label asp-for="VisitorId" class="form-label"></label>
+        <select asp-for="VisitorId" asp-items="ViewBag.Visitors" class="form-control">
+            <option value="">Select visitor</option>
+        </select>
+        <span asp-validation-for="VisitorId" class="text-danger"></span>
+    </div>
+
+    <hr />
+
+    <div class="mb-3">
+        <label asp-for="Status" class="form-label"></label>
+        <select asp-for="Status" class="form-control">
+            <option value="@PassGuard.Models.PassStatuses.Active">Active</option>
+            <option value="@PassGuard.Models.PassStatuses.Revoked">Revoked</option>
+        </select>
+        <span asp-validation-for="Status" class="text-danger"></span>
+    </div>
+
+    <div class="mb-3">
+        <label asp-for="CreatedAt" class="form-label">Created At</label>
+        <input asp-for="CreatedAt" type="datetime-local" class="form-control" />
+    </div>
+
+    <div class="mb-3">
+        <label asp-for="ExpiresAt" class="form-label">Expires At</label>
+        <input asp-for="ExpiresAt" type="datetime-local" class="form-control" />
+        <span asp-validation-for="ExpiresAt" class="text-danger"></span>
+    </div>
+
+    <button type="submit" class="btn btn-warning">Update</button>
+</form>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

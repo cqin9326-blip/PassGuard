@@ -1,0 +1,25 @@
+@model PassGuard.Models.ViewModels.EstateFormViewModel
+
+@{
+    ViewData["Title"] = "Edit Estate";
+}
+
+<h2>Edit Estate</h2>
+
+<form asp-action="Edit" method="post">
+    <input asp-for="EstateId" type="hidden" />
+
+    <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+
+    <div class="mb-3">
+        <label asp-for="EstateName" class="form-label"></label>
+        <input asp-for="EstateName" class="form-control" />
+        <span asp-validation-for="EstateName" class="text-danger"></span>
+    </div>
+
+    <button type="submit" class="btn btn-warning">Update</button>
+</form>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

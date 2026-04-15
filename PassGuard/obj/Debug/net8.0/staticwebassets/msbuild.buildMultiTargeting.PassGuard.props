@@ -1,0 +1,3 @@
+﻿<Project>
+  <Import Project="../build/PassGuard.props" />
+</Project>

@@ -1,0 +1,197 @@
+@model PassGuard.Models.ViewModels.DashboardViewModel
+
+@{
+    ViewData["Title"] = "Estate Command";
+}
+
+<section class="dashboard-shell">
+    <div class="dashboard-hero">
+        <span class="dashboard-kicker">Admin Control</span>
+        <h1>Estate Command Dashboard</h1>
+    </div>
+
+    <div class="stats-grid">
+        <div class="stat-card">
+            <span class="stat-label">Estates</span>
+            <div class="stat-value">@Model.TotalEstates</div>
+            <div class="stat-note">Managed Estates</div>
+        </div>
+        <div class="stat-card">
+            <span class="stat-label">Homes</span>
+            <div class="stat-value">@Model.TotalHomes</div>
+            <div class="stat-note">Registered properties</div>
+        </div>
+        <div class="stat-card">
+            <span class="stat-label">Users</span>
+            <div class="stat-value">@Model.TotalUsers</div>
+            <div class="stat-note">Registered system users</div>
+        </div>
+        <div class="stat-card">
+            <span class="stat-label">Visitors</span>
+            <div class="stat-value">@Model.TotalVisitors</div>
+            <div class="stat-note">Unique visitor records</div>
+        </div>
+        <div class="stat-card">
+            <span class="stat-label">Check-Ins Today</span>
+            <div class="stat-value">@Model.TodayCheckInCount</div>
+            <div class="stat-note">Gate activity logged today</div>
+        </div>
+    </div>
+
+    <div class="summary-strip">
+        <div class="summary-pill">
+            <span>Active Passes</span>
+            <strong>@Model.ActivePasses</strong>
+        </div>
+        <div class="summary-pill">
+            <span>Used Passes</span>
+            <strong>@Model.UsedPasses</strong>
+        </div>
+        <div class="summary-pill">
+            <span>Expired Passes</span>
+            <strong>@Model.ExpiredPasses</strong>
+        </div>
+        <div class="summary-pill">
+            <span>Revoked Passes</span>
+            <strong>@Model.RevokedPasses</strong>
+        </div>
+    </div>
+
+    <div class="dashboard-grid">
+        <section class="dashboard-panel dashboard-panel--wide">
+            <h3>Pass Status Mix</h3>
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <span class="stat-label">Active</span>
+                    <div class="stat-value">@Model.ActivePasses</div>
+                </div>
+                <div class="stat-card">
+                    <span class="stat-label">Used</span>
+                    <div class="stat-value">@Model.UsedPasses</div>
+                </div>
+                <div class="stat-card">
+                    <span class="stat-label">Expired</span>
+                    <div class="stat-value">@Model.ExpiredPasses</div>
+                </div>
+                <div class="stat-card">
+                    <span class="stat-label">Revoked</span>
+                    <div class="stat-value">@Model.RevokedPasses</div>
+                </div>
+            </div>
+        </section>
+
+        <aside class="dashboard-panel dashboard-panel--narrow">
+            <h3>Quick Access</h3>
+            <div class="quick-actions">
+                <a asp-controller="Estate" asp-action="Index" class="btn btn-primary">Manage Estates</a>
+                <a asp-controller="Home" asp-action="Index" class="btn btn-outline-success">Manage Homes</a>
+                <a asp-controller="UserManagement" asp-action="Index" class="btn btn-outline-success">Manage Users</a>
+                <a asp-controller="AuditLog" asp-action="Index" class="btn btn-outline-success">Open Audit Logs</a>
+            </div>
+            <div class="mini-metric">
+                <span>Visitor Records</span>
+                <strong>@Model.TotalVisitors</strong>
+            </div>
+            <div class="mini-metric">
+                <span>Operational Passes</span>
+                <strong>@(Model.ActivePasses + Model.UsedPasses)</strong>
+            </div>
+        </aside>
+
+        <section class="dashboard-panel dashboard-panel--wide">
+            <h3>Today's Visitor Activity</h3>
+            @if (Model.TodayVisitors.Any())
+            {
+                <table class="table estate-table">
+                    <thead>
+                        <tr>
+                            <th>Visitor</th>
+                            <th>Home</th>
+                            <th>Estate</th>
+                            <th>Created</th>
+                            <th>Expires</th>
+                            <th>Status</th>
+                            <th>Gate Result</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var item in Model.TodayVisitors)
+                        {
+                            var statusClass = item.Status.ToLowerInvariant();
+                            var resultClass = item.Result.ToLowerInvariant();
+                            <tr>
+                                <td>@item.VisitorName</td>
+                                <td>@item.HomeAddress</td>
+                                <td>@item.EstateName</td>
+                                <td>@item.CreatedAt</td>
+                                <td>@item.ExpiresDisplay</td>
+                                <td><span class="status-pill status-pill--@statusClass">@item.Status</span></td>
+                                <td><span class="status-pill status-pill--@resultClass">@item.Result</span></td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            }
+            else
+            {
+                <p class="dashboard-empty">No visitor activity has been recorded today.</p>
+            }
+        </section>
+
+        <aside class="dashboard-panel dashboard-panel--narrow">
+            <h3>Activity Feed</h3>
+            @if (Model.RecentActivity.Any())
+            {
+                <div class="activity-list">
+                    @foreach (var item in Model.RecentActivity)
+                    {
+                        <div class="activity-item">
+                            <span class="activity-dot"></span>
+                            <div>
+                                <p class="activity-title">@item.Title</p>
+                                <p class="activity-detail">@item.Detail</p>
+                                <p class="activity-time">@item.Timestamp</p>
+                            </div>
+                        </div>
+                    }
+                </div>
+            }
+            else
+            {
+                <p class="dashboard-empty">No recent events are available yet.</p>
+            }
+        </aside>
+
+        <section class="dashboard-panel">
+            <h3>Recent Audit Logs</h3>
+            @if (Model.RecentLogs.Any())
+            {
+                <table class="table estate-table">
+                    <thead>
+                        <tr>
+                            <th>Time</th>
+                            <th>Action</th>
+                            <th>User</th>
+                            <th>Detail</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var item in Model.RecentLogs)
+                        {
+                            <tr>
+                                <td>@item.Timestamp</td>
+                                <td>@item.ActionType</td>
+                                <td>@item.UserEmail</td>
+                                <td>@item.Detail</td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            }
+            else
+            {
+                <p class="dashboard-empty">No audit history has been recorded yet.</p>
+            }
+        </section>
+    </div>
+</section>
