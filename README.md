@@ -170,7 +170,7 @@ The admin dashboard displays system overview, including estates, homes, and user
 ### 🎫 Pass Creation & Security Check-in
 ![Pass and Check-in](images/pass-security.png)
 
-This screen demonstrates the core workflow: generating a visit pass and verifying it at the gate through security check-in.<img width="2148" height="1242" alt="LOGIN" src="https://github.com/user-attachments/assets/1168f544-a6bf-4650-b7c2-2bc69c6b9161" />
+This screen demonstrates the core workflow: generating a visit pass and verifying it at the gate through security check-in.
 
 
 ## 🚀 Future Improvements
@@ -184,8 +184,7 @@ This screen demonstrates the core workflow: generating a visit pass and verifyin
 
 ## 👨‍💻 Author
 
-**Cunwei Qin (Angel)**
-Winnipeg, Canada
+**Cunwei Qin （And other Group 2 members) Winnipeg, Canada
 
 ---
 
