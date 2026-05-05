@@ -154,23 +154,26 @@ dotnet run --project PassGuard
 ## 📸 Screenshots
 
 ### 🔐 Login Page
-![Login](images/login.png)
+![Login](images/LOGIN.png)
 
 The login page provides secure access for different user roles including Admin, HomeOwner, and Security.
 
 ---
 
 ### 📊 Admin Dashboard
-![Admin Dashboard](images/admin-dashboard.png)
+![Admin Dashboard](images/ADMIN-DASHBOARD.png)
 
 The admin dashboard displays system overview, including estates, homes, and user management features.
 
 ---
 
 ### 🎫 Pass Creation & Security Check-in
-![Pass and Check-in](images/pass-security.png)
+![Pass](images/CREATE-PASS%20%26%20SECURITY%20CHECK-IN.png)
 
-This screen demonstrates the core workflow: generating a visit pass and verifying it at the gate through security check-in.
+This screen demonstrates the core workflow: generating a visit pass and verifying it at the gate through security check-in.<img width="2148" height="1242" alt="LOGIN" src="https://github.com/user-attachments/assets/4bc6ce15-8445-4150-aaef-975131cc5d2a" />
+<img width="2148" height="1242" alt="CREATE-PASS   SECURITY CHECK-IN" src="https://github.com/user-attachments/assets/7c81e8db-9eb7-42e4-84e3-201145f91c39" />
+<img width="2148" height="1242" alt="ADMIN-DASHBOARD" src="https://github.com/user-attachments/assets/cbb592ae-a3e5-48d0-950b-bde10ad16165" />
+
 
 
 ## 🚀 Future Improvements
