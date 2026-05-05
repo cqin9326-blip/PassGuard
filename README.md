@@ -1,6 +1,3 @@
-<img width="2148" height="1242" alt="pass-security" src="https://github.com/user-attachments/assets/6697de58-f31d-4315-8894-807974db3ec7" />
-<img width="2148" height="1242" alt="login" src="https://github.com/user-attachments/assets/fad469a8-6529-472e-ba2a-370c3ceed4e6" />
-<img width="2148" height="1242" alt="admin-dashboard" src="https://github.com/user-attachments/assets/2eec6318-7775-4550-af9b-ebd42dd60b94" />
 # 🛡️ PassGuard – Residential Visitor Access Management System
 
 PassGuard is a full-stack **ASP.NET Core MVC** web application designed to manage visitor access within residential estates.
@@ -157,23 +154,23 @@ dotnet run --project PassGuard
 ## 📸 Screenshots
 
 ### 🔐 Login Page
-![Login](images/login.png)
+![Login](login.png)
 
-The login page provides secure access for different user roles including Admin, HomeOwner, and Security.
+The login page enables secure authentication for different user roles, including Admin, HomeOwner, and Security, ensuring controlled access to system features.
 
 ---
 
 ### 📊 Admin Dashboard
-![Admin Dashboard](images/admin-dashboard.png)
+![Admin Dashboard](admin-dashboard.png)
 
-The admin dashboard displays system overview, including estates, homes, and user management features.
+The admin dashboard provides a centralized overview of the system, allowing administrators to manage estates, homes, users, and monitor overall activity.
 
 ---
 
 ### 🎫 Pass Creation & Security Check-in
-![Pass](images/pass-security.png)
+![Pass](pass-security.png)
 
-This screen demonstrates the core workflow: generating a visit pass and verifying it at the gate through security check-in.
+This screen highlights the core functionality of the system, where homeowners generate visit passes and security staff verify them at the gate, completing the full visitor access workflow.
 
 
 
